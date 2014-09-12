@@ -12,6 +12,7 @@ if (Meteor.isClient) {
 
   Session.set('plat', -1);
   Session.set('plng', -1);
+  Session.set('total', 0);
 
   var watchID = navigator.geolocation.watchPosition(function(position) {
       Session.set('plat', position.coords.latitude);
@@ -22,8 +23,11 @@ if (Meteor.isClient) {
     var msglist = Players.find({lat: {$gt: Session.get('plat') - radius, $lt: Session.get('plat') + radius},
      lng: {$gt: Session.get('plng') - radius, $lt: Session.get('plng') + radius} } ,
      {sort: {score: -1, time: -1, name: 1, lat: 1, lng: 1}, limit:10});
-    
-      newstuffscore = msglist.fetch()[msglist.fetch().length -1].score;
+      
+      var msgarr = msglist.fetch();
+      newstuffscore = msgarr[(msgarr.length - msgarr.length/2)].score;
+
+      Session.set('total', Players.find({}).count());
 
       return msglist;
   };
@@ -76,6 +80,13 @@ if (Meteor.isClient) {
     }
 
 
+
+
+    },
+
+    'click input.gettotal': function () {
+      alert(Session.get('total'));
+      
     },
 
     'keypress': function (evt, template) {
@@ -98,7 +109,7 @@ if (Meteor.isClient) {
 if (Meteor.isServer) {
   Meteor.startup(function () {
     if (Players.find().count() === 0) {
-      var names = ["hello world bitch"];
+      var names = ["hop to the top"];
       for (var i = 0; i < names.length; i++)
         Players.insert({name: names[i], time:(new Date).getTime(), 
           score: Math.floor(Random.fraction()*10)*5, lat: -1, lng: -1});
