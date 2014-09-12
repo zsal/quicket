@@ -1,5 +1,5 @@
 <head>
-  <title>Quickit</title>
+  <title>Quicket</title>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
   <link rel="icon" 
       type="image/png" 
@@ -18,7 +18,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="#">Quickit β</a>
+      <a class="navbar-brand" href="#">Quicket β</a>
     </div>
 
     <!-- Collect the nav links, forms, and other content for toggling -->
@@ -31,7 +31,10 @@
       
       <ul class="nav navbar-nav navbar-right">
         <li ng-click="selected = tabs[0];" ng-class="{active: 'Blog'==selected}"><a href="?">Getting Started</a></li>
+        
         <li ng-click="selected = 'About'" ng-class="{active: 'About'==selected}"><a href="?">FAQ</a>
+        </li>
+        <li ng-click="selected = 'About'" ng-class="{active: 'About'==selected}"><a href="?">Privacy</a>
         </li>
         <li ng-click="selected = tabs[1];" ng-class="{active: 'Portfolio'==selected}"><a href="?">Contact Us</a></li>
         
@@ -63,12 +66,12 @@
 
 <template name="player">
   <div class="player {{selected}}">
-    <span class="name">{{name}}</span>
+    <span class="name" style="cursor: pointer;">{{name}}</span>
     
     <span class="pull-right">
       <span class="score">{{score}}</span>
       <span class="glyphicon glyphicon-eye-open" data-toggle="popover" data-content="{{lat}} , {{lng}}">
-        
+      <!--<div class="pull-right" id="boot"></div>-->
       </span>
       <!--<span class="lat">{{lat}}</span>
       <span class="lng">{{lng}}</span>-->
@@ -82,7 +85,7 @@
 
         <input type="text" class="form-inline" style="width:94%" id="playerName" />
         <span>
-        <input type="button"  class="add" value="chirp"/>
+        <input type="button"  class="add" value="quicket"/>
         </span>
         </span>
 

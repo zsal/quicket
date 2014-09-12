@@ -2,11 +2,6 @@ body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-weight: 200;
     padding: 0;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -o-user-select: none;
-    user-select: none;
 }
 
 #title {
@@ -23,6 +18,16 @@ body {
     background-image: url(http://s23.postimg.org/fl21cccjv/cricketfill.png);
 }
 
+#boot {
+    cursor: pointer;
+    height:1.17em;
+    width:1em;
+    margin:0em .5em;
+    background-size: cover;
+    background-position: center center;
+    background-image: url(http://s30.postimg.org/c6cqpky1p/Screen_Shot_2014_09_11_at_13_08_31.png);
+}
+
 
 #outer {
     max-width: 80%;
@@ -32,7 +37,6 @@ body {
 }
 
 .player {
-    cursor: pointer;
     padding: 5px;
 }
 

@@ -1,14 +1,12 @@
 // Set up a collection to contain player information. On the server,
 // it is backed by a MongoDB collection named "players".
 
-
 Players = new Mongo.Collection("players");
+Website = new Mongo.Collection("website");
 
 var radius = .0007;
-var stomps = 20;
-
-var state = "loading"
-var situations = ["empty", "loading", "okay"];
+var upval_inc = .1;
+var newstuffscore = 1;
 
 if (Meteor.isClient) {
 
@@ -20,20 +18,14 @@ if (Meteor.isClient) {
       Session.set('plng', position.coords.longitude);
   });
 
-
-
   Template.leaderboard.players = function () {
-    state = "loading";
     var msglist = Players.find({lat: {$gt: Session.get('plat') - radius, $lt: Session.get('plat') + radius},
      lng: {$gt: Session.get('plng') - radius, $lt: Session.get('plng') + radius} } ,
-     {sort: {score: -1, time: -1, name: 1, lat: 1, lng: 1}});
+     {sort: {score: -1, time: -1, name: 1, lat: 1, lng: 1}, limit:10});
+    
+      newstuffscore = msglist.fetch()[msglist.fetch().length -1].score;
 
-    if(msglist.count()) {
-      state = "okay";
       return msglist;
-    } else {
-      state = "empty";
-    }
   };
 
   Template.leaderboard.selected_name = function () {
@@ -48,29 +40,27 @@ if (Meteor.isClient) {
   Template.leaderboard.events({
     'click input.inc': function () {
       Players.update(Session.get("selected_player"), {$inc: {score: -1}});
-    },
-
-    'click input.evalit': function() {
-      alert("remove score")
-    //var players = Players.find({}).fetch();
-      Players.update({lat:{$gt: 0}}, {$set: {score: 1}});
-
-
     }
-    
+
   });
 
   Template.player.events({
-    'click': function () {
-      if(stomps > 0) {
+    'click span.name': function () {
         Session.set("selected_player", this._id);
-        Players.update(Session.get("selected_player"), {$inc: {score: -1}});
-        stomps--;
-        var player = Players.findOne(Session.get("selected_player"));
-        if(player.score <= 0) {
+        var upval = Website.find({name: {$in:['upval']}}).fetch()[0];
+        //alert(upval.num);
+        Players.update(Session.get("selected_player"), {$inc: {score: upval.num}});
+        Website.update(upval._id, {$inc: {num: 1}});
+
+      },
+
+    'click div#boot': function() {
+      Session.set("selected_player", this._id);
+      var player = Players.findOne(Session.get("selected_player"));
+      Players.update(Session.get("selected_player"), {$inc: {score: -1}});
+      if(player.score <= 0) {
           Players.remove(Session.get("selected_player"));
         }
-      }
     }
   });
 
@@ -79,17 +69,18 @@ if (Meteor.isClient) {
       // todo - add validation
 
       if(playerName.value !== "") {
-        Players.insert({name: playerName.value, score: 1, time:(new Date).getTime(),
+        Players.insert({name: playerName.value, score: newstuffscore, time:(new Date).getTime(),
          lat: Session.get('plat') , lng: Session.get('plng') } );
 
         playerName.value = "";
     }
 
+
     },
 
     'keypress': function (evt, template) {
       if (evt.which === 13 && playerName.value !== "") {
-        Players.insert({name: playerName.value, score: 1, time:(new Date).getTime(),
+        Players.insert({name: playerName.value, score: newstuffscore, time:(new Date).getTime(),
        lat: Session.get('plat') , lng: Session.get('plng') } );
         playerName.value = "";
       }
@@ -109,7 +100,13 @@ if (Meteor.isServer) {
     if (Players.find().count() === 0) {
       var names = ["hello world bitch"];
       for (var i = 0; i < names.length; i++)
-        Players.insert({name: names[i], time:(new Date).getTime(), score: Math.floor(Random.fraction()*10)*5, lat: -1, lng: -1});
+        Players.insert({name: names[i], time:(new Date).getTime(), 
+          score: Math.floor(Random.fraction()*10)*5, lat: -1, lng: -1});
+    }
+    if(Website.find().count() === 0) {
+      Website.insert({name: 'total', num: 0});
+      Website.insert({name: 'upval', num: 1});
+
     }
 
   });
