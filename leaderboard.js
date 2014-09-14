@@ -8,6 +8,10 @@ var radius = .0007;
 var upval_inc = .1;
 var newstuffscore = 1;
 
+var expression = /(http|ftp|https):\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:\/~+#-]*[\w@?^=%&amp;\/~+#-])?/;
+
+var urlpattern = new RegExp(expression); // fragment locater
+
 if (Meteor.isClient) {
 
   Session.set('plat', -1);
@@ -77,6 +81,11 @@ if (Meteor.isClient) {
       // todo - add validation
 
       if(playerName.value !== "") {
+        //if(urlpattern.test(playerName.value)) {
+         // playerName.value = "<a href="+ playerName.value + ">"+ playerName.value +"</a>";
+
+        //}
+
         Players.insert({name: playerName.value, score: newstuffscore, time:(new Date).getTime(),
          lat: Session.get('plat') , lng: Session.get('plng') } );
 
@@ -96,6 +105,9 @@ if (Meteor.isClient) {
 
     'keypress': function (evt, template) {
       if (evt.which === 13 && playerName.value !== "") {
+        //if(urlpattern.test(playerName.value)) {
+          //playerName.value = "<a href="+ playerName.value + ">"+ playerName.value +"</a>";
+        //}
         Players.insert({name: playerName.value, score: newstuffscore, time:(new Date).getTime(),
        lat: Session.get('plat') , lng: Session.get('plng') } );
         playerName.value = "";

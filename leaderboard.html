@@ -17,7 +17,7 @@
 
 </script>
 
-  <nav class="navbar navbar-default" role="navigation" >
+  <nav class="navbar navbar-default navbar-fixed-top" role="navigation" >
 
   <div class="container-fluid" style="margin:0 9%;">
     <!-- Brand and toggle get grouped for better mobile display -->
@@ -40,13 +40,13 @@
       </ul>
       
       <ul class="nav navbar-nav navbar-right">
-        <li ng-click="selected = tabs[0];" ng-class="{active: 'Blog'==selected}"><a href="/getting-started.html">Getting Started</a></li>
+        <li ><a data-scrollto="getting-started" data-toggle="collapse" data-target="#getting-started" href="#getting-started">Getting Started</a></li>
         
-        <li ng-click="selected = 'About'" ng-class="{active: 'About'==selected}"><a href="?">FAQ</a>
+        <li ><a data-scrollto="faq" data-toggle="collapse" data-target="#faq" href="#faq">FAQ</a>
         </li>
-        <li ng-click="selected = 'About'" ng-class="{active: 'About'==selected}"><a href="?">Privacy</a>
+        <li ><a data-scrollto="privacy" data-toggle="collapse" data-target="#privacy" href="#privacy">Privacy</a>
         </li>
-        <li ng-click="selected = tabs[1];" ng-class="{active: 'Portfolio'==selected}"><a href="?">Contact Us</a></li>
+        <li ><a data-scrollto="contact-us" data-toggle="collapse" data-target="#contact-us" href="#contact-us">Contact Us</a></li>
         
       </ul>
     </div><!-- /.navbar-collapse -->
@@ -57,6 +57,9 @@
 <body>
 
   <div id="outer">
+  <br>
+  <br>
+  <br>
     {{> leaderboard}}
     
   <p>
@@ -66,6 +69,31 @@
   <div id="typer">
     {{> addPlayer}}
     </div>
+<div id="outer" class="panel-group">
+    <section id="getting-started" class="collapse">
+      <h2>Getting Started</h2>
+      <div class="well"> Quicket is a way to share with those around you. By sharing your location, we provide a minimalistic way to anonymously post within your radius. <br>
+      If you see something you like, you can click to <b>hop</b> a post up to the top. <br>
+      Our goal is to provide a consistent and reliable experience for our users, using the latest technology and methodology for precise location positioning <br>
+       </div>
+    </section>
+    <section id="faq" class="collapse">
+    <h2>FAQ</h2>
+      <div class="well"> <h4>Why is the site not working?</h4>Quicket is currently in very early beta stages, please bear with us as we try to get things working.<br></div>
+      <div class="well"> <h4>Why is the site so ugly?</h4>Our pressing issue is providing a reliabile service. Dedication to a superb UI will follow soon after.<br> </div>
+      </section>
+    <section id="privacy" class="collapse">
+    <h2>Privacy</h2>
+      <div class="well"> Quicket does not track you or share any information with advertisers. </div>
+    </section>
+    <section id="contact-us" class="collapse">
+    
+    <h2>Contact Us</h2>
+      <div class="well"> Feel free to email us: teamquicket@gmail.com </div>
+      </section>
+</div>
+
+
 
   
 </body>
@@ -108,4 +136,10 @@
 
     </div>
 </template>
+
+
+
+
+
+
 
