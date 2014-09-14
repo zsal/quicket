@@ -40,7 +40,7 @@
       </ul>
       
       <ul class="nav navbar-nav navbar-right">
-        <li ng-click="selected = tabs[0];" ng-class="{active: 'Blog'==selected}"><a href="?">Getting Started</a></li>
+        <li ng-click="selected = tabs[0];" ng-class="{active: 'Blog'==selected}"><a href="/getting-started.html">Getting Started</a></li>
         
         <li ng-click="selected = 'About'" ng-class="{active: 'About'==selected}"><a href="?">FAQ</a>
         </li>
@@ -58,10 +58,16 @@
 
   <div id="outer">
     {{> leaderboard}}
+    
+  <p>
+    Total quickets worldwide: <b>{{total_quickets}}</b>
+  </p>
   </div>
   <div id="typer">
-  {{> addPlayer}}
-  </div>
+    {{> addPlayer}}
+    </div>
+
+  
 </body>
 
 <template name="leaderboard">
@@ -96,7 +102,6 @@
         <input type="text" class="form-inline" style="width:94%" id="playerName" maxlength="100" />
         <span>
         <input type="button"  class="add" value="quicket"/>
-        <input type="button" class="gettotal" value="total"/>
 
         </span>
         </span>

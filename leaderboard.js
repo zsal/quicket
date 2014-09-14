@@ -12,7 +12,11 @@ if (Meteor.isClient) {
 
   Session.set('plat', -1);
   Session.set('plng', -1);
-  Session.set('total', 0);
+  Session.set('total_quickets', 0);
+
+  Handlebars.registerHelper('total_quickets',function(input){
+    return Session.get("total_quickets");
+  });
 
   var watchID = navigator.geolocation.watchPosition(function(position) {
       Session.set('plat', position.coords.latitude);
@@ -25,9 +29,9 @@ if (Meteor.isClient) {
      {sort: {score: -1, time: -1, name: 1, lat: 1, lng: 1}, limit:10});
       
       var msgarr = msglist.fetch();
-      newstuffscore = msgarr[(msgarr.length - msgarr.length/2)].score;
+      newstuffscore = msgarr[Math.floor((msgarr.length - msgarr.length/2))].score;
 
-      Session.set('total', Players.find({}).count());
+      Session.set('total_quickets', Players.find({}).count());
 
       return msglist;
   };
@@ -77,6 +81,7 @@ if (Meteor.isClient) {
          lat: Session.get('plat') , lng: Session.get('plng') } );
 
         playerName.value = "";
+
     }
 
 
