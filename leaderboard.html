@@ -67,7 +67,7 @@
   </p>
   </div>
   <div id="typer">
-    {{> addPlayer}}
+    {{> addMessage}}
     </div>
 <div id="outer" class="panel-group">
     <section id="getting-started" class="collapse">
@@ -100,16 +100,16 @@
 
 <template name="leaderboard">
   <div class="leaderboard" style="overflow:auto; max-height:100%">
-    {{#each players}}
-      {{> player}}
+    {{#each messages}}
+      {{> message}}
     {{/each}}
     <!--<input type="button"  class="evalit" value="decall" />-->
   </div>
 
 </template>
 
-<template name="player">
-  <div class="player {{selected}}">
+<template name="message">
+  <div class="message {{selected}}">
     <span class="name" style="cursor: pointer;">{{name}}</span>
     
     <span class="pull-right">
@@ -123,11 +123,11 @@
   </div>
 </template>
 
-<template name="addPlayer">
+<template name="addMessage">
     <div id="outer">
     <span>
 
-        <input type="text" class="form-inline" style="width:94%" id="playerName" maxlength="100" />
+        <input type="text" class="form-inline" style="width:94%" id="messageText" maxlength="100" />
         <span>
         <input type="button"  class="add" value="quicket"/>
 

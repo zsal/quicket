@@ -1,7 +1,7 @@
-// Set up a collection to contain player information. On the server,
+// Set up a collection to contain message information. On the server,
 // it is backed by a MongoDB collection named "players".
 
-Players = new Mongo.Collection("players");
+MessageDb = new Mongo.Collection("players");
 Website = new Mongo.Collection("website");
 
 var radius = .0007;
@@ -27,69 +27,69 @@ if (Meteor.isClient) {
       Session.set('plng', position.coords.longitude);
   });
 
-  Template.leaderboard.players = function () {
-    var msglist = Players.find({lat: {$gt: Session.get('plat') - radius, $lt: Session.get('plat') + radius},
+  Template.leaderboard.messages = function () {
+    var msglist = MessageDb.find({lat: {$gt: Session.get('plat') - radius, $lt: Session.get('plat') + radius},
      lng: {$gt: Session.get('plng') - radius, $lt: Session.get('plng') + radius} } ,
      {sort: {score: -1, time: -1, name: 1, lat: 1, lng: 1}, limit:10});
       
       var msgarr = msglist.fetch();
       newstuffscore = msgarr[Math.floor((msgarr.length - msgarr.length/2))].score;
 
-      Session.set('total_quickets', Players.find({}).count());
+      Session.set('total_quickets', MessageDb.find({}).count());
 
       return msglist;
   };
 
   Template.leaderboard.selected_name = function () {
-    var player = Players.findOne(Session.get("selected_player"));
-    return player && player.name;
+    var message = MessageDb.findOne(Session.get("selected_message"));
+    return message && message.name;
   };
 
-  Template.player.selected = function () {
-    return Session.equals("selected_player", this._id) ? "selected" : '';
+  Template.message.selected = function () {
+    return Session.equals("selected_message", this._id) ? "selected" : '';
   };
 
   Template.leaderboard.events({
     'click input.inc': function () {
-      Players.update(Session.get("selected_player"), {$inc: {score: -1}});
+      MessageDb.update(Session.get("selected_message"), {$inc: {score: -1}});
     }
 
   });
 
-  Template.player.events({
+  Template.message.events({
     'click span.name': function () {
-        Session.set("selected_player", this._id);
+        Session.set("selected_message", this._id);
         var upval = Website.find({name: {$in:['upval']}}).fetch()[0];
         //alert(upval.num);
-        Players.update(Session.get("selected_player"), {$inc: {score: upval.num}});
+        MessageDb.update(Session.get("selected_message"), {$inc: {score: upval.num}});
         Website.update(upval._id, {$inc: {num: 1}});
 
       },
 
     'click div#boot': function() {
-      Session.set("selected_player", this._id);
-      var player = Players.findOne(Session.get("selected_player"));
-      Players.update(Session.get("selected_player"), {$inc: {score: -1}});
-      if(player.score <= 0) {
-          Players.remove(Session.get("selected_player"));
+      Session.set("selected_message", this._id);
+      var message = MessageDb.findOne(Session.get("selected_message"));
+      MessageDb.update(Session.get("selected_message"), {$inc: {score: -1}});
+      if(message.score <= 0) {
+          MessageDb.remove(Session.get("selected_message"));
         }
     }
   });
 
-  Template.addPlayer.events = {
+  Template.addMessage.events = {
     'click input.add': function () {
       // todo - add validation
 
-      if(playerName.value !== "") {
-        //if(urlpattern.test(playerName.value)) {
-         // playerName.value = "<a href="+ playerName.value + ">"+ playerName.value +"</a>";
+      if(messageText.value !== "") {
+        //if(urlpattern.test(messageText.value)) {
+         // messageText.value = "<a href="+ messageText.value + ">"+ messageText.value +"</a>";
 
         //}
 
-        Players.insert({name: playerName.value, score: newstuffscore, time:(new Date).getTime(),
+        MessageDb.insert({name: messageText.value, score: newstuffscore, time:(new Date).getTime(),
          lat: Session.get('plat') , lng: Session.get('plng') } );
 
-        playerName.value = "";
+        messageText.value = "";
 
     }
 
@@ -104,13 +104,13 @@ if (Meteor.isClient) {
     },
 
     'keypress': function (evt, template) {
-      if (evt.which === 13 && playerName.value !== "") {
-        //if(urlpattern.test(playerName.value)) {
-          //playerName.value = "<a href="+ playerName.value + ">"+ playerName.value +"</a>";
+      if (evt.which === 13 && messageText.value !== "") {
+        //if(urlpattern.test(messageText.value)) {
+          //messageText.value = "<a href="+ messageText.value + ">"+ messageText.value +"</a>";
         //}
-        Players.insert({name: playerName.value, score: newstuffscore, time:(new Date).getTime(),
+        MessageDb.insert({name: messageText.value, score: newstuffscore, time:(new Date).getTime(),
        lat: Session.get('plat') , lng: Session.get('plng') } );
-        playerName.value = "";
+        messageText.value = "";
       }
 
 
@@ -122,13 +122,13 @@ if (Meteor.isClient) {
   };
 }
 
-// On server startup, create some players if the database is empty.
+// On server startup, create some messages if the database is empty.
 if (Meteor.isServer) {
   Meteor.startup(function () {
-    if (Players.find().count() === 0) {
+    if (MessageDb.find().count() === 0) {
       var names = ["hop to the top"];
       for (var i = 0; i < names.length; i++)
-        Players.insert({name: names[i], time:(new Date).getTime(), 
+        MessageDb.insert({name: names[i], time:(new Date).getTime(), 
           score: Math.floor(Random.fraction()*10)*5, lat: -1, lng: -1});
     }
     if(Website.find().count() === 0) {
@@ -139,11 +139,11 @@ if (Meteor.isServer) {
 
   });
   /*var decscore = function() {
-    var players = Players.find({}).fetch();
-    for(x in players) {
-      Players.update(x, {$inc: {score: -1}});
+    var messages = MessageDb.find({}).fetch();
+    for(x in messages) {
+      MessageDb.update(x, {$inc: {score: -1}});
       if(x.score <= 0) {
-        Players.remove(x);
+        MessageDb.remove(x);
       }
     }
   }
