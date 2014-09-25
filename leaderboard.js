@@ -80,7 +80,7 @@ if (Meteor.isClient) {
     'click input.add': function () {
       // todo - add validation
 
-      if(messageText.value !== "") {
+      if(messageText.value !== "" && Session.get('plat') != -1) {
         //if(urlpattern.test(messageText.value)) {
          // messageText.value = "<a href="+ messageText.value + ">"+ messageText.value +"</a>";
 
@@ -104,7 +104,7 @@ if (Meteor.isClient) {
     },
 
     'keypress': function (evt, template) {
-      if (evt.which === 13 && messageText.value !== "") {
+      if (evt.which === 13 && messageText.value !== "" && Session.get('plat') != -1) {
         //if(urlpattern.test(messageText.value)) {
           //messageText.value = "<a href="+ messageText.value + ">"+ messageText.value +"</a>";
         //}
