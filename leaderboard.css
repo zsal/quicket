@@ -35,21 +35,21 @@ body {
     overflow: auto;
 }
 
-.player {
+.message {
     padding: 5px;
 }
 
-.player .name {
+.message .name {
     display: inline-block;
     font-size: 1.5em;
 }
 
 
-.player.selected {
+.message.selected {
     background-color: yellow;
 }
 
-.player.selected .score {
+.message.selected .score {
     color: black;
 }
 
