@@ -12,8 +12,28 @@ var expression = /(http|ftp|https):\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:\/~+#-]
 
 var urlpattern = new RegExp(expression); // fragment locater
 
-if (Meteor.isClient) {
 
+if(!String.linkify) {
+    String.prototype.linkify = function() {
+
+        // http://, https://, ftp://
+        var urlPattern = /\b(?:https?|ftp):\/\/[a-z0-9-+&@#\/%?=~_|!:,.;]*[a-z0-9-+&@#\/%=~_|]/gim;
+
+        // www. sans http:// or https://
+        var pseudoUrlPattern = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
+
+        // Email addresses
+        var emailAddressPattern = /\w+@[a-zA-Z_]+?(?:\.[a-zA-Z]{2,6})+/gim;
+
+        return this
+            .replace(urlPattern, '<a href="$&">$&</a>')
+            .replace(pseudoUrlPattern, '$1<a href="http://$2">$2</a>')
+            .replace(emailAddressPattern, '<a href="mailto:$&">$&</a>');
+    };
+}
+
+if (Meteor.isClient) {
+  var sound = new Audio('/chirping.mp3');
   Session.set('plat', -1);
   Session.set('plng', -1);
   Session.set('total_quickets', 0);
@@ -36,6 +56,12 @@ if (Meteor.isClient) {
       newstuffscore = msgarr[Math.floor((msgarr.length - msgarr.length/2))].score;
 
       Session.set('total_quickets', Players.find({}).count());
+      //for(x in msgarr) {
+        //alert(msgarr[x].name.linkify());
+      //}
+
+      sound.play();
+      setTimeout(function() {sound.pause();}, 600);
 
       return msglist;
   };

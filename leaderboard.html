@@ -17,6 +17,7 @@
 
 </script>
 
+
   <nav class="navbar navbar-default navbar-fixed-top" role="navigation" >
 
   <div class="container-fluid" style="margin:0 9%;">
@@ -110,8 +111,11 @@
 
 <template name="player">
   <div class="player {{selected}}">
+    <div class = ".col-xs-12 .col-md-8">
     <span class="name" style="cursor: pointer;">{{name}}</span>
+    </div>
     
+    <div class = ".col-xs-12 .col-md-8">
     <span class="pull-right">
       <span class="score">{{score}}</span>
       <span class="glyphicon glyphicon-eye-open" data-toggle="popover" data-content="{{lat}} , {{lng}}">
@@ -120,6 +124,7 @@
       <!--<span class="lat">{{lat}}</span>
       <span class="lng">{{lng}}</span>-->
     </span>
+    </div>
   </div>
 </template>
 
@@ -129,7 +134,7 @@
 
         <input type="text" class="form-inline" style="width:94%" id="playerName" maxlength="100" />
         <span>
-        <input type="button"  class="add" value="quicket"/>
+        <input type="button"  class="add" value="quicket" onclick="playSound(this, '/chirping.mp3');"/>
 
         </span>
         </span>
