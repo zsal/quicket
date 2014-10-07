@@ -1,0 +1,229 @@
+
+/* Responsive Helpers Under 1000px
+*********************************************************************************************/
+
+@media (max-width: 1000px) {
+
+    /* Sections
+    *****************************************************************************************/
+    
+    section.split .media {
+        width: 35%;
+    }
+    
+    section.split .copy {
+        width: 65%;
+        margin-left: 35%;
+    }
+
+    /* Intro Text
+    *****************************************************************************************/
+    
+    #intro h1 {
+        font-size: 75px;
+        line-height: 75px;
+        padding-bottom: 16px;
+        margin-bottom: 20px;
+    }
+    
+    #intro p {
+        font-size: 22px;
+        line-height: 22px;
+    }
+    
+    #intro h1::after {
+        width: 24px;
+        height: 24px;
+        bottom: 31px;
+        margin-left: -12px;
+    }
+    
+    /* Services
+    *****************************************************************************************/
+    
+    #services .content {
+        padding: 0 100px;
+    }
+    
+    /* Services Columns
+    *****************************************************************************************/
+    
+    #services .content .column {
+        border-right: 1px solid rgba(255, 255, 255, 0.075);
+        width: 100%;
+        padding-top: 0;
+    }
+    
+    #services .content .column:nth-child(1) {
+        padding-top: 100px;
+    }
+}
+
+/* Responsive Helpers Under 500px
+*********************************************************************************************/
+
+@media (max-width: 500px) {
+
+    /* Header Logo
+    *****************************************************************************************/
+    
+    #header #logo {
+        left: 50%;
+        margin-left: -30px;
+    }
+    
+    /* Header Menu
+    *****************************************************************************************/
+    
+    #header ul {
+        display: none;
+    }
+    
+    /* Sections
+    *****************************************************************************************/
+    
+    section.split .media {
+        width: 100%;
+    }
+    
+    section.split .copy {
+        width: 100%;
+        margin-left: 0;
+    }
+    
+    section.split .copy .content {
+        float: left;
+        padding: 40px;
+    }
+    
+    section.split .copy .content h2 {
+        font-size: 30px;
+        line-height: 30px;
+        padding-bottom: 22px;
+        margin-bottom: 22px;
+    }
+    
+    section.split .copy .content p {
+        font-size: 14px;
+        line-height: 18px;
+        margin-bottom: 10px;
+    }
+    
+    section.split .copy .content blockquote {
+        font-size: 18px;
+        line-height: 22px;
+        margin-bottom: 19px;
+    }
+
+    /* Intro Text
+    *****************************************************************************************/
+    
+    #intro h1 {
+        font-size: 36px;
+        line-height: 36px;
+        padding-bottom: 16px;
+        margin-bottom: 16px;
+    }
+    
+    #intro p {
+        font-size: 18px;
+        line-height: 22px;
+        padding: 0 40px;
+    }
+    
+    #intro h1::after {
+        bottom: 71px;
+    }
+    
+    /* About
+    *****************************************************************************************/
+    
+    #about .media {
+        opacity: .1;
+    }
+    
+    
+    #about p:last-of-type {
+        padding-bottom: 26px;
+        margin-bottom: 27px;
+    }
+    
+    #about img {
+        width: 50px;
+    }
+    
+    /* Services
+    *****************************************************************************************/
+    
+    #services {
+        float:left !important;
+    }
+    
+    #services .media {
+        opacity: .1;
+    }
+    
+    #services .content {
+        padding: 0 40px;
+    }
+    
+    /* Services Columns
+    *****************************************************************************************/
+    
+    #services .content .column {
+        border: none;
+        padding-top: 0;
+    }
+    
+    #services .content .column:first-of-type {
+        padding-top: 40px;
+    }
+    
+    #services .content .column:last-of-type {
+        border: none;
+        padding: 0;
+    }
+    
+    /* Services Service
+    *****************************************************************************************/
+    
+    #services .content .column .service {
+        padding: 0 0 15px;
+    }
+    
+    #services .content .column .service h2 {
+        font-size: 24px;
+        line-height: 24px;
+        padding-bottom: 20px;
+        margin-bottom: 20px;
+    }
+    
+    /* Contact
+    *****************************************************************************************/
+    
+    #contact .media {
+        opacity: .075;
+    }
+    
+    /* News
+    *****************************************************************************************/
+    
+    #news {
+        height: 330px;
+    }
+    
+    /* News Text
+    *****************************************************************************************/
+    
+    #news h2 {
+        font-size: 36px;
+        line-height: 36px;
+        margin-bottom: 18px;
+    }
+    
+    #news p {
+        font-size: 18px;
+        line-height: 22px;
+        padding: 0 40px 34px;
+    }
+}

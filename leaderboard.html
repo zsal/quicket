@@ -58,6 +58,7 @@
 <body>
 
   <div id="outer">
+
   <br>
   <br>
   <br>
@@ -67,9 +68,12 @@
     Total quickets worldwide: <b>{{total_quickets}}</b>
   </p>
   </div>
+  <br>
+  <br>
   <div id="typer">
     {{> addMessage}}
     </div>
+
 <div id="outer" class="panel-group">
     <section id="getting-started" class="collapse">
       <h2>Getting Started</h2>
@@ -113,7 +117,6 @@
   <div class="message {{selected}}">
     <span class="name" style="cursor: pointer;">{{name}}</span>
     </div>
-    
     <div class = ".col-xs-12 .col-md-8">
     <span class="pull-right">
       <span class="score">{{score}}</span>
@@ -124,7 +127,7 @@
       <span class="lng">{{lng}}</span>-->
     </span>
     </div>
-  </div>
+      <div class="divider"></div>
 </template>
 
 <template name="addMessage">
@@ -133,7 +136,6 @@
 
         <input type="text" class="form-inline" style="width:94%" id="messageText" maxlength="100" />
         <span>
-        <input type="button"  class="add" value="quicket" onclick="playSound(this, '/chirping.mp3');"/>
 
         </span>
         </span>

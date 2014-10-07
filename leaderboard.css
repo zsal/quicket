@@ -4,6 +4,22 @@ body {
     padding: 0;
 }
 
+.divider {
+    border-bottom:1px solid #d1d1d1;
+    height: 1px;
+    margin:.3em;
+}
+
+#typer {
+    z-index: 100; 
+    background: white;
+    position:fixed;
+    bottom: 0;
+    left:0;
+    padding:.5em;
+    width: 100%;
+}
+
 #title {
     max-width: 80%;
     margin: auto;
@@ -32,7 +48,7 @@ body {
 #outer {
     max-width: 80%;
     margin: 0 auto;
-    overflow: auto;
+    
 }
 
 .message {
@@ -40,13 +56,13 @@ body {
 }
 
 .message .name {
-    display: inline-block;
     font-size: 1.5em;
+    word-wrap: break-word;
 }
 
 
 .message.selected {
-    background-color: yellow;
+    background-color: lightgreen;
 }
 
 .message.selected .score {

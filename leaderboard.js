@@ -3,7 +3,6 @@
 
 MessageDb = new Mongo.Collection("players");
 Website = new Mongo.Collection("website");
-
 var radius = .0007;
 var upval_inc = .1;
 var newstuffscore = 1;
@@ -54,7 +53,7 @@ if (Meteor.isClient) {
       
       var msgarr = msglist.fetch();
       newstuffscore = msgarr[Math.floor((msgarr.length - msgarr.length/2))].score;
-      Session.set('total_quickets', Players.find({}).count());
+      Session.set('total_quickets', MessageDb.find({}).count());
       //for(x in msgarr) {
         //alert(msgarr[x].name.linkify());
       //}
