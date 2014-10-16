@@ -8,9 +8,11 @@ var upval_inc = .1;
 var newstuffscore = 1;
 
 var expression = /(http|ftp|https):\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:\/~+#-]*[\w@?^=%&amp;\/~+#-])?/;
-
 var urlpattern = new RegExp(expression); // fragment locater
 
+Handlebars.registerHelper('session',function(input){
+    return Session.get(input);
+});
 
 if(!String.linkify) {
     String.prototype.linkify = function() {
@@ -72,6 +74,11 @@ if (Meteor.isClient) {
   Template.message.selected = function () {
     return Session.equals("selected_message", this._id) ? "selected" : '';
   };
+
+  Template.message.msgname = function(name) {
+    var element = name.linkify();
+    return new Handlebars.SafeString(element);
+  }
 
   Template.leaderboard.events({
     'click input.inc': function () {

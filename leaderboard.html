@@ -35,6 +35,7 @@
 
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+
       <ul class="nav navbar-nav" >
         
         
@@ -48,11 +49,13 @@
         <li ><a data-scrollto="privacy" data-toggle="collapse" data-target="#privacy" href="#privacy">Privacy</a>
         </li>
         <li ><a data-scrollto="contact-us" data-toggle="collapse" data-target="#contact-us" href="#contact-us">Contact Us</a></li>
-        
+        <br>
       </ul>
+      
     </div><!-- /.navbar-collapse -->
   </div><!-- /.container-fluid -->
 </nav>
+
 </head>
 
 <body>
@@ -62,9 +65,11 @@
   <br>
   <br>
   <br>
+  
     {{> leaderboard}}
     
   <p>
+{{> navbar}}<br>
     Total quickets worldwide: <b>{{total_quickets}}</b>
   </p>
   </div>
@@ -89,13 +94,14 @@
       </section>
     <section id="privacy" class="collapse">
     <h2>Privacy</h2>
-      <div class="well"> Quicket does not track you or share any information with advertisers. </div>
+      <div class="well"> Quicket does not tr ack you or share any information with advertisers. </div>
     </section>
     <section id="contact-us" class="collapse">
     
     <h2>Contact Us</h2>
-      <div class="well"> Feel free to email us: teamquicket@gmail.com </div>
+      <div class="well"> Feel free to email us: teamquicket@umich.edu </div>
       </section>
+      
 </div>
 
 
@@ -105,6 +111,8 @@
 
 <template name="leaderboard">
   <div class="leaderboard" style="overflow:auto; max-height:100%">
+    
+
     {{#each messages}}
       {{> message}}
     {{/each}}
@@ -113,10 +121,23 @@
 
 </template>
 
+<template name="navbar">
+  <!--<input type="range"  min=".0007" max="100" /> -->
+    <span> My location: {{session "plat"}}, {{session "plng"}} </span>
+    {{> map}}
+</template>
+
+
+
+
 <template name="message">
+
   <div class="message {{selected}}">
-    <span class="name" style="cursor: pointer;">{{name}}</span>
+    <span class="name" style="cursor:pointer;">
+      {{msgname name}}
+    </span>
     </div>
+
     <div class = ".col-xs-12 .col-md-8">
     <span class="pull-right">
       <span class="score">{{score}}</span>
@@ -127,7 +148,16 @@
       <span class="lng">{{lng}}</span>-->
     </span>
     </div>
-      <div class="divider"></div>
+
+    <div class="divider"></div>
+</template>
+
+<template name="map">
+  
+ <small>
+ <a href="http://www.openstreetmap.org/?lat={{session 'plat'}}&lon={{session 'plng'}}&zoom=15&layers=M">View Larger Map</a>
+ </small>
+      
 </template>
 
 <template name="addMessage">
