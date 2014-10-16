@@ -38,6 +38,13 @@ if (Meteor.isClient) {
   Session.set('plat', -1);
   Session.set('plng', -1);
   Session.set('total_quickets', 0);
+  var cookie = localStorage.getItem('uid');
+
+  if (!cookie) {
+    var nuid = Website.find({name: {$in:['nextuid']}}).fetch()[0];
+    localStorage.setItem('uid', nuid.num);
+    Website.update({name: {$in:['nextuid']}}, {$inc: {num: 1}});
+  }
 
   Handlebars.registerHelper('total_quickets',function(input){
     return Session.get("total_quickets");
@@ -51,7 +58,7 @@ if (Meteor.isClient) {
   Template.leaderboard.messages = function () {
     var msglist = MessageDb.find({lat: {$gt: Session.get('plat') - radius, $lt: Session.get('plat') + radius},
      lng: {$gt: Session.get('plng') - radius, $lt: Session.get('plng') + radius} } ,
-     {sort: {score: -1, time: -1, name: 1, lat: 1, lng: 1}, limit:10});
+     {sort: {score: -1, clicks: -1, time: -1, name: 1, lat: 1, lng: 1}, limit:10});
       
       var msgarr = msglist.fetch();
       newstuffscore = msgarr[Math.floor((msgarr.length - msgarr.length/2))].score;
@@ -60,7 +67,7 @@ if (Meteor.isClient) {
         //alert(msgarr[x].name.linkify());
       //}
 
-      sound.play();
+      //sound.play();
       setTimeout(function() {sound.pause();}, 600);
 
       return msglist;
@@ -90,21 +97,22 @@ if (Meteor.isClient) {
   Template.message.events({
     'click span.name': function () {
         Session.set("selected_message", this._id);
-        var upval = Website.find({name: {$in:['upval']}}).fetch()[0];
-        //alert(upval.num);
-        MessageDb.update(Session.get("selected_message"), {$inc: {score: upval.num}});
-        Website.update(upval._id, {$inc: {num: 1}});
+        var canvote = MessageDb.findOne(Session.get("selected_message")).voters.indexOf(cookie);
+        if (canvote === -1){
 
-      },
+          
 
-    'click div#boot': function() {
-      Session.set("selected_message", this._id);
-      var message = MessageDb.findOne(Session.get("selected_message"));
-      MessageDb.update(Session.get("selected_message"), {$inc: {score: -1}});
-      if(message.score <= 0) {
-          MessageDb.remove(Session.get("selected_message"));
+          var upval = Website.find({name: {$in:['upval']}}).fetch()[0];
+          //alert(upval.num);
+          MessageDb.update(Session.get("selected_message"), {$inc: {score: upval.num, clicks: 1}});
+          MessageDb.update(Session.get("selected_message"), {$push: {voters: cookie}});
+          Website.update(upval._id, {$inc: {num: 1}});
+
         }
-    }
+
+      }
+
+    
   });
 
   Template.addMessage.events = {
@@ -139,7 +147,7 @@ if (Meteor.isClient) {
         //if(urlpattern.test(messageText.value)) {
           //messageText.value = "<a href="+ messageText.value + ">"+ messageText.value +"</a>";
         //}
-        MessageDb.insert({name: messageText.value, score: newstuffscore, time:(new Date).getTime(),
+        MessageDb.insert({name: messageText.value, score: newstuffscore, time:(new Date).getTime(), clicks: 1, voters: [],
        lat: Session.get('plat') , lng: Session.get('plng') } );
         messageText.value = "";
       }
@@ -159,7 +167,7 @@ if (Meteor.isServer) {
     if (MessageDb.find().count() === 0) {
       var names = ["hop to the top"];
       for (var i = 0; i < names.length; i++)
-        MessageDb.insert({name: names[i], time:(new Date).getTime(), 
+        MessageDb.insert({name: names[i], time:(new Date).getTime(), clicks: 1, voters: [],
           score: Math.floor(Random.fraction()*10)*5, lat: -1, lng: -1});
     }
     if(Website.find().count() === 0) {
@@ -167,6 +175,11 @@ if (Meteor.isServer) {
       Website.insert({name: 'upval', num: 1});
 
     }
+    if(Website.find().count() === 2) {
+      Website.insert({name: 'nextuid', num: 0});
+
+    }
+
 
   });
   /*var decscore = function() {
