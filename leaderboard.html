@@ -94,7 +94,7 @@
       </section>
     <section id="privacy" class="collapse">
     <h2>Privacy</h2>
-      <div class="well"> Quicket does not tr ack you or share any information with advertisers. </div>
+      <div class="well"> Quicket does not track you or share any information with advertisers. </div>
     </section>
     <section id="contact-us" class="collapse">
     
@@ -111,18 +111,14 @@
 
 <template name="leaderboard">
   <div class="leaderboard" style="overflow:auto; max-height:100%">
-    
-
     {{#each messages}}
       {{> message}}
     {{/each}}
-    <!--<input type="button"  class="evalit" value="decall" />-->
   </div>
 
 </template>
 
 <template name="navbar">
-  <!--<input type="range"  min=".0007" max="100" /> -->
     <span> My location: {{session "plat"}}, {{session "plng"}} </span>
     {{> map}}
 </template>
@@ -133,23 +129,15 @@
 <template name="message">
 
   <div class="message {{selected}}">
-    <span class="name" style="cursor:pointer;">
+    <span class="name" style="cursor:pointer; max-width:80%">
       {{msgname name}}
     </span>
     <span class="pull-right">
     <span class="score">{{clicks}}</span>
-      <span class="glyphicon glyphicon-eye-open" data-toggle="popover" data-content="{{lat}} , {{lng}}">
-      <!--<div class="pull-right" id="boot"></div>-->
-      </span></span>
+      <!--<span class="glyphicon glyphicon-eye-open" data-toggle="popover" data-content="{{lat}} , {{lng}}"></span>-->
+      </span>
     </div>
 
-    <div class = ".col-xs-12 .col-md-8">
-    
-      
-      <!--<span class="lat">{{lat}}</span>
-      <span class="lng">{{lng}}</span>-->
-    
-    </div>
 
     <div class="divider"></div>
 </template>
@@ -157,7 +145,7 @@
 <template name="map">
   
  <small>
- <a href="http://www.openstreetmap.org/?lat={{session 'plat'}}&lon={{session 'plng'}}&zoom=15&layers=M">View Larger Map</a>
+ <a href="http://www.openstreetmap.org/?lat={{session 'plat'}}&lon={{session 'plng'}}&zoom=100&layers=M">View Larger Map</a>
  </small>
       
 </template>
@@ -166,7 +154,7 @@
     <div id="outer">
     <span>
 
-        <input type="text" class="form-inline" style="width:94%" id="messageText" maxlength="100" />
+        <input type="text" class="form-inline" style="width:100%" id="messageText" />
         <span>
 
         </span>

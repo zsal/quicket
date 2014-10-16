@@ -7,7 +7,6 @@ body {
 .divider {
     border-bottom:1px solid #d1d1d1;
     height: 1px;
-    margin:.3em;
 }
 
 #typer {
@@ -45,17 +44,18 @@ body {
 
 
 #outer {
-    max-width: 80%;
+    max-width: 87%;
     margin: 0 auto;
     
 }
 
 .message {
-    padding: 5px;
+    padding: .5em;
+    cursor: pointer;
 }
 
 .message .name {
-    font-size: 1.5em;
+    font-size: 1.3em;
     word-wrap: break-word;
 }
 
