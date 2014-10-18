@@ -1,171 +1,195 @@
 <head>
-  <title>Quicket</title>
-  <meta name="viewport" content="width=device-width, user-scalable=no" />
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-  <link rel="icon" 
-      type="image/png" 
-      href="http://s3.postimg.org/qen3mdtpb/cricketfill.png">
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
-  <script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    <title>Quicket</title>
+    <meta name="viewport" content="width=device-width, user-scalable=no" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <link rel="icon" type="image/png" href="http://s3.postimg.org/qen3mdtpb/cricketfill.png">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script src="//www.parsecdn.com/js/parse-1.3.0.min.js"></script>
+    <!-- link previewing -->
+</head>
 
-  ga('create', 'UA-54737425-1', 'auto');
-  ga('send', 'pageview');
+<body>
 
-</script>
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
 
+        <div class="container-fluid" style="margin:0 9%;">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header" >
+              <div data-toggle="collapse" data-target="#extra-space">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    
+                </button>
+                </div>
+                <a class="navbar-brand" href="">Quicket</a>
+                <div id="logo"></div>
+            </div>
 
-  <nav class="navbar navbar-default navbar-fixed-top" role="navigation" >
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 
-  <div class="container-fluid" style="margin:0 9%;">
-    <!-- Brand and toggle get grouped for better mobile display -->
-    <div class="navbar-header" >
+                <ul class="nav navbar-nav">
+                <li><a href="/getting-started.html">Getting Started </a>
+                    </li>
+                
+                </ul>
 
-      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand" href="">Quicket β</a><div id="logo"></div>
-    </div>
+                
+                  
 
-    <!-- Collect the nav links, forms, and other content for toggling -->
-    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+                <li>
+                <label style="margin:auto">
+                            <output for='fader' class="inline" id='volume'>Radius of {{radius}} miles </output>
+                        </label>
+                        <input type='range' min='.0005' max='.026' value='.0007' id='fader' step='.005' onchange="upRadius(this.value)">
+                        </li>
+                    <li> </li>
+                    
+                    
+                    
 
-      <ul class="nav navbar-nav" >
-        
-        
-      </ul>
-      
-      <ul class="nav navbar-nav navbar-right">
-        <li ><a data-scrollto="getting-started" data-toggle="collapse" data-target="#getting-started" href="#getting-started">Getting Started</a></li>
-        
+                    
+                    <!--
         <li ><a data-scrollto="faq" data-toggle="collapse" data-target="#faq" href="#faq">FAQ</a>
         </li>
         <li ><a data-scrollto="privacy" data-toggle="collapse" data-target="#privacy" href="#privacy">Privacy</a>
         </li>
         <li ><a data-scrollto="contact-us" data-toggle="collapse" data-target="#contact-us" href="#contact-us">Contact Us</a></li>
-        <br>
-      </ul>
-      
-    </div><!-- /.navbar-collapse -->
-  </div><!-- /.container-fluid -->
-</nav>
+        <br>-->
+                </ul>
 
-</head>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container-fluid -->
+    </nav>
 
-<body>
-
-  <div id="outer">
-
-  <br>
-  <br>
-  <br>
-  
-    {{> leaderboard}}
-    
-  <p>
-{{> navbar}}<br>
-    Total quickets worldwide: <b>{{total_quickets}}</b>
-  </p>
-  </div>
-  <br>
-  <br>
-  <div id="typer">
-    {{> addMessage}}
+    <div id="overlay">
+        <img src="img/cricket_watermark.png" />
+        <p> Finding your location... </p>
+        <div class="loading">
+            <div></div>
+        </div>
     </div>
 
-<div id="outer" class="panel-group">
-    <section id="getting-started" class="collapse">
-      <h2>Getting Started</h2>
-      <div class="well"> Quicket is a way to share with those around you. By sharing your location, we provide a minimalistic way to anonymously post within your radius. <br>
-      If you see something you like, you can click to <b>hop</b> a post up to the top. <br>
-      Our goal is to provide a consistent and reliable experience for our users, using the latest technology and methodology for precise location positioning <br>
-       </div>
-    </section>
-    <section id="faq" class="collapse">
-    <h2>FAQ</h2>
-      <div class="well"> <h4>Why is the site not working?</h4>Quicket is currently in very early beta stages, please bear with us as we try to get things working.<br></div>
-      <div class="well"> <h4>Why is the site so ugly?</h4>Our pressing issue is providing a reliabile service. Dedication to a superb UI will follow soon after.<br> </div>
-      </section>
-    <section id="privacy" class="collapse">
-    <h2>Privacy</h2>
-      <div class="well"> Quicket does not track you or share any information with advertisers. </div>
-    </section>
-    <section id="contact-us" class="collapse">
-    
-    <h2>Contact Us</h2>
-      <div class="well"> Feel free to email us: teamquicket@umich.edu </div>
-      </section>
-      
-</div>
+    <div id="outer" style="opacity:0">
 
+        <br>
+        <br>
+        <br>
+        <section id="extra-space" class="collapse">
+            <div class="">
+                <br><br><br><br>
+                <br>
+                <br>
+            </div>
+        </section>
+        {{> navbar}}
+        <br>
+        <span> </span>
+        <span> </span>
+        <script>
 
+            (function(i, s, o, g, r, a, m) {
+                i['GoogleAnalyticsObject'] = r;
+                i[r] = i[r] || function() {
+                    (i[r].q = i[r].q || []).push(arguments)
+                }, i[r].l = 1 * new Date();
+                a = s.createElement(o),
+                    m = s.getElementsByTagName(o)[0];
+                a.async = 1;
+                a.src = g;
+                m.parentNode.insertBefore(a, m)
+            })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
 
-  
+            ga('create', 'UA-54737425-1', 'auto');
+            ga('send', 'pageview');
+
+            function upRadius(val) {
+                Session.set("radius", +val);
+            }
+        </script>
+        {{> leaderboard}}
+
+        <p>
+
+        </p>
+    </div>
+    <br>
+    <br>
+    <div id="typer">
+        {{> addMessage}}
+    </div>
+
 </body>
 
 <template name="leaderboard">
-  <div class="leaderboard" style="overflow:auto; max-height:100%">
-    {{#each messages}}
-      {{> message}}
-    {{/each}}
-  </div>
+    <div class="leaderboard" style="overflow:auto; max-height:100%">
+        {{#each messages}} {{> message}} {{/each}}
+    </div>
 
 </template>
 
 <template name="navbar">
-    <span> My location: {{session "plat"}}, {{session "plng"}} </span>
-    {{> map}}
+    <!--<span> My location: {{session "plat"}}, {{session "plng"}} </span>-->
+    <small> <strong>{{total_quickets}}</strong> {{> Sorting}} Quickets in {{> map}} </small>
+    
 </template>
 
 
 
 
 <template name="message">
-
-  <div class="message {{selected}}">
-    <span class="name" style="cursor:pointer; max-width:80%">
-      {{msgname name}}
-    </span>
-    <span class="pull-right">
-    <span class="score">{{clicks}}</span>
-      <!--<span class="glyphicon glyphicon-eye-open" data-toggle="popover" data-content="{{lat}} , {{lng}}"></span>-->
-      </span>
+    <div class="message {{selected}}">
+        <div class="name" style="max-width:100%">
+            {{msgname name}}
+        </div>
+        <small>
+        <div style="text-align:right; font-size: .9em;">
+            <div style="float:left"><span style="text-align:left" class="glyphicon glyphicon-time"></span><span>{{msgtime time}} </span>
+            </div>
+            <span class="badge score">{{clicks}}</span>
+        </div>
+        </small>
     </div>
-
-
     <div class="divider"></div>
 </template>
 
 <template name="map">
-  
- <small>
- <a href="http://www.openstreetmap.org/?lat={{session 'plat'}}&lon={{session 'plng'}}&zoom=100&layers=M">View Larger Map</a>
- </small>
-      
+
+ <a href="http://www.openstreetmap.org/?lat={{session 'plat'}}&lon={{session 'plng'}}&zoom=100&layers=M" target="_blank">My Location</a>
+
 </template>
 
+
+<template name="Sorting">
+  <div class="btn-group btn-group-xs default" data-toggle="buttons">
+    <label id="New" class="btn btn-default active">
+      <input type="radio" name="sort" checked> New
+    </label>
+    <label id="Hot" class="btn btn-default">
+      <input type="radio" name="sort" > Hot
+    </label>
+  </div>
+</template>
+
+
 <template name="addMessage">
-    <div id="outer">
-    <span>
-
-        <input type="text" class="form-inline" style="width:100%" id="messageText" />
-        <span>
-
-        </span>
-        </span>
+    <div  class ="affix-bottom" id="outer">
+    <form>
+        
+        <div class="input-group">
+          <input type="text" class="form-control" style="width:100%" id="messageText" maxlength="140" autofocus/>
+          <span class="input-group-btn">
+            <button class="btn btn-default" type="submit">Post</button>
+          </span>
+        </div>
+        </form>
 
     </div>
 </template>
-
-
-
-
-
-
-

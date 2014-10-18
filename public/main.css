@@ -263,7 +263,6 @@ section.split .copy .content blockquote {
 
 #intro::before {
     background: url('img/cricket_watermark.png') center center no-repeat;
-    background-size: cover;
 }
 
 #intro::after {
