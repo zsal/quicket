@@ -2,13 +2,13 @@
   "meteor": {},
   "dependencies": {
     "basePackages": {
-      "parse-sdk": {}
+      "twitter-api": {}
     },
     "packages": {
-      "parse-sdk": {
-        "git": "https://github.com/jcastelli/meteor-parse-sdk.git",
-        "tag": "v0.1.0",
-        "commit": "24d214bd66513087262f2c33d5383c73bafa18e4"
+      "twitter-api": {
+        "git": "https://github.com/Sewdn/meteor-twitter-api.git",
+        "tag": "v0.1.2",
+        "commit": "d940e1018cb56ed011948a8fc36eb721d201cb60"
       }
     }
   }
