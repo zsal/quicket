@@ -4,4 +4,4 @@ Quicket is a way to share with those around you. Each post is tied to a latitude
 
 [Setting up the Meteor framework](https://www.meteor.com/)
 
-[Live app](http://quicket.meteor.com/)
+[Live app](http://qckt.me/)

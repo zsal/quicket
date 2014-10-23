@@ -16,14 +16,14 @@ if(!String.linkify) {
             .replace(emailAddressPattern, '<a href="mailto:$&">$&</a>');
     };
 }
-
+/*
 var mywindow = $(window);
 var mypos = mywindow.scrollTop();
 var up = false;
 var newscroll;
 mywindow.scroll(function () {
     newscroll = mywindow.scrollTop();
-    if (newscroll > mypos && !up) {
+    if (newscroll > mypos && !up && newscroll > 0 && mypos > 0) {
         if($('#messageText').is(':focus')){
             $('#navbar').stop().fadeOut();
             up = !up;
@@ -33,7 +33,7 @@ mywindow.scroll(function () {
             up = !up;
         }
         //console.log(up);
-    } else if(newscroll < mypos && up) {
+    } else if(newscroll < mypos  && up || $(window).scrollTop() <= 0) {
         $('#navbar').stop().fadeIn();
         $('form').stop().fadeIn();
         up = !up;
@@ -48,3 +48,4 @@ mywindow.scroll(function () {
     .on('blur', 'input', function(e) {
         $body.removeClass('fixfixed');
     });
+    */

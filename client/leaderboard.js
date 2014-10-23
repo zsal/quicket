@@ -1,8 +1,6 @@
 // Set up a collection to contain message information. On the server,
 // it is backed by a MongoDB collection named "players".
 
-MessageDb = new Mongo.Collection("players");
-Website = new Mongo.Collection("website");
 var upval_inc = .1;
 var newstuffscore = 1;
 Parse.initialize("s3bB2gf3m7VMdhzWokei3I324u9Qev1unjAB8YXJ", "z9aoFpoCnTnT22Ev8nA0dtGseLDBaBswlfiEj6T3");
@@ -22,6 +20,8 @@ Range bar at top (like Whisper)
 Background a lightly faded map?
 */
 
+
+
 if (Meteor.isClient) {
   //var sound = new Audio('/chirping.mp3');
   var start = true;
@@ -29,9 +29,16 @@ if (Meteor.isClient) {
   Session.set('plat', -1);
   Session.set('plng', -1);
   Session.set('accuracy', 30); //in meters
-  Session.set('radius', 100);
+  Session.set('radius', 500);
   Session.set('total_quickets', 0);
   Session.set("sort", "New");
+
+  Deps.autorun(function () {
+    Meteor.subscribe("messages", [Session.get('plng'), Session.get('plat'), Session.get('radius')]);
+  });
+  
+  Meteor.subscribe("website");
+  
   var cookie = localStorage.getItem('uid');
   if (!cookie) {
     newuser = true;
@@ -85,7 +92,7 @@ if (Meteor.isClient) {
           }
        } 
      } ,
-     {sort: {time: -1, score: -1, clicks: -1, name: 1, location: 1}, limit:25});
+     {sort: {time: -1, score: -1, clicks: -1, name: 1, location: 1}, limit:50});
 
     } else if(Session.get("sort") == "Hot") {
 
@@ -98,13 +105,13 @@ if (Meteor.isClient) {
             }
          } 
         },
-       {sort: {score: -1, clicks: -1, time: -1, name: 1, location: 1}, limit:25});
+       {sort: {score: -1, clicks: -1, time: -1, name: 1, location: 1}, limit:50});
     }
       
       var msgarr = msglist.fetch();
       if(msgarr[0]) {
         $("#nothinghere").hide();
-        newstuffscore = msgarr[Math.floor((msgarr.length - msgarr.length/2))].score;
+        //newstuffscore = msgarr[Math.floor((msgarr.length - msgarr.length/2))].score;
         Session.set('total_quickets', msglist.count());
       } else {
         $("#nothinghere").show();
@@ -181,7 +188,7 @@ if (Meteor.isClient) {
 
 
   Template.message.events({
-    'click div': function () {
+    'click div #score': function () {
         Session.set("selected_message", this._id);
         if(!this.voters) {
           this.voters = [];
@@ -208,7 +215,7 @@ if (Meteor.isClient) {
           score: newstuffscore,
           time:(new Date).getTime(),
           clicks: 0, 
-          voters: [],
+          voters: [cookie],
           location: { type: "Point", coordinates: [ Session.get("plng") , Session.get("plat") ] } 
         });
         

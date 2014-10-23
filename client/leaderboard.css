@@ -18,7 +18,6 @@ strong {
     font-weight: 700;
 }
 
-
 .divider {
     border-bottom:1px solid #d1d1d1;
     height: 1px;
@@ -31,9 +30,6 @@ strong {
 #typer {
     z-index: 100; 
     background: white;
-    position:fixed;
-    bottom: 0;
-    padding:.5em;
     width: 100%;
 }
 
@@ -46,12 +42,12 @@ strong {
     height:2em;
     width:3.7em;
     text-align: center;
-    position: fixed;
     margin:auto;
     right:50%;
     left:44%;
     top:0;
     background-size: cover;
+    position: fixed;
     background-position: center center;
     background-image: url(img/cricket_smooth.png);
 }
@@ -75,7 +71,6 @@ strong {
 
 .message {
     padding: .5em;
-    cursor: pointer;
 }
 
 .message .name {
@@ -88,9 +83,12 @@ strong {
     background-color: lightgreen;
 }
 
-.message.selected .score {
-    color: black;
-}
+.message .score:hover {
+    cursor: pointer; 
+          -moz-animation:bounceOut .4s linear;
+          -webkit-animation:bounceOut .4s linear;
+          box-shadow: 0 0 0 5px #4db8d6;
+        }
 
 .details, .none {
     font-weight: bold;
@@ -209,4 +207,21 @@ strong {
     50%  { opacity: 1;  transform: scale( 1 ); }
     to   { opacity: .5; transform: scale( .75 ); }
 }
+
+@-moz-keyframes bounceOut {
+        0%{ box-shadow: 0 0 0 4px #4db8d6 opacity:1;}
+        25%{ box-shadow: 0 0 0 1px #4db8d6 opacity:1;}
+        50%{ box-shadow: 0 0 0 7px #4db8d6 opacity:1; }
+        75%{ box-shadow: 0 0 0 4px #4db8d6 opacity:1;}
+        100%{ box-shadow: 0 0 0 5px #4db8d6 opacity:1;}
+}
+
+@-webkit-keyframes bounceOut {
+        0%{ box-shadow: 0 0 0 4px #4db8d6 opacity:1;}
+        25%{ box-shadow: 0 0 0 1px #4db8d6 opacity:1;}
+        50%{ box-shadow: 0 0 0 7px #4db8d6 opacity:1; }
+        75%{ box-shadow: 0 0 0 4px #4db8d6 opacity:1;}
+        100%{ box-shadow: 0 0 0 5px #4db8d6 opacity:1;}
+}
+
 
