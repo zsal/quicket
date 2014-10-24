@@ -1,12 +1,11 @@
 <head>
     <title>Quicket</title>
-     <meta name="description" content="Be spontaneous and instantly send text and links to people nearby">
-     <meta name="keywords" content="quicket, solomo, local, nearby, share, ann arbor" />
+    <meta name="description" content="Be spontaneous and instantly send text and links to people nearby">
+    <meta name="keywords" content="quicket, messaging, spontaneous, yik yak, solomo, local, nearby, share, ann arbor" />
     <meta name="viewport" content="width=device-width, user-scalable=no" />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
     <link rel="icon" type="image/png" href="http://s3.postimg.org/qen3mdtpb/cricketfill.png">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
-    <script src="//www.parsecdn.com/js/parse-1.3.0.min.js"></script>
     <!-- link previewing -->
 </head>
 
@@ -28,8 +27,7 @@
                 </button>
                 </div>
                 <a class="navbar-brand"  style="pull-left" href="">{{> navbar}}</a>
-                
-<a href="/getting-started.html"><div id="logo" ></div></a>
+                <a href="/getting-started.html" style="pull-right"><div id="logo" ></div></a>
             </div>
 
 
@@ -43,24 +41,14 @@
                 
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
-                <li>
-                            <p style="margin:auto; text-align:center;"> {{total_quickets}} posts within <strong> {{radius}} </strong> meters of {{> map}} </p>
+                 <li>           <p style="margin:auto; text-align:center;"> 
+                            {{session "total_quickets"}} posts within <strong> {{session "radius"}} </strong> meters of {{> map}} (near {{session "closest"}})
+                            </p>
                         
-                        <input  style="max-width:80%; margin:auto;" type='range' min='{{session "accuracy"}}' max='2500' value='500' id='fader' step='10' onchange="upRadius(this.value)">
+                        <input  style="max-width:80%; margin:auto;" type='range' min='{{session "accuracy"}}' max='3009' value='1250' id='fader' step='10' onchange="upRadius(this.value)">
                         </li>
-                    <li> </li>
                     
                     
-                    
-
-                    
-                    <!--
-        <li ><a data-scrollto="faq" data-toggle="collapse" data-target="#faq" href="#faq">FAQ</a>
-        </li>
-        <li ><a data-scrollto="privacy" data-toggle="collapse" data-target="#privacy" href="#privacy">Privacy</a>
-        </li>
-        <li ><a data-scrollto="contact-us" data-toggle="collapse" data-target="#contact-us" href="#contact-us">Contact Us</a></li>
-        <br>-->
                 </ul>
 
             </div>
@@ -108,7 +96,6 @@
 </body>
 
 <template name="leaderboard">
-    
     <div class="leaderboard" style=" max-height:100%">
         <div id="welcoming" class="alert alert-info" role="alert">
         <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
@@ -135,8 +122,10 @@
 
 <template name="message">
     <div class="message {{selected}}">
+
         <div class="name" style="max-width:100%">
-            {{msgname name}}
+          {{msgname name}}
+
         </div>
         <small>
         <div style="text-align:right; font-size: .9em; ">
@@ -164,6 +153,9 @@
     </label>
     <label id="Hot" class="btn btn-default">
       <input type="radio" name="sort" > Hot
+    </label>
+    <label id="Me" class="btn btn-default">
+      <input type="radio" name="sort" > Just Me
     </label>
   </div>
 </template>

@@ -10,42 +10,12 @@ if(!String.linkify) {
         // Email addresses
         var emailAddressPattern = /\w+@[a-zA-Z_]+?(?:\.[a-zA-Z]{2,6})+/gim;
 
+        //var imageurl = /^https?:\/\/(?:[a-z\-]+\.)+[a-z]{2,6}(?:\/[^\/#?]+)+\.(?:jpe?g|gif|png)$/;
+
         return this
+            //.replace(imageurl, '<img style="max-height:15em" href="$&" src="$&" />')
             .replace(urlPattern, '<a href="$&" target="_blank">$&</a>')
             .replace(pseudoUrlPattern, '$1<a href="http://$2" target="_blank">$2</a>')
             .replace(emailAddressPattern, '<a href="mailto:$&">$&</a>');
     };
 }
-/*
-var mywindow = $(window);
-var mypos = mywindow.scrollTop();
-var up = false;
-var newscroll;
-mywindow.scroll(function () {
-    newscroll = mywindow.scrollTop();
-    if (newscroll > mypos && !up && newscroll > 0 && mypos > 0) {
-        if($('#messageText').is(':focus')){
-            $('#navbar').stop().fadeOut();
-            up = !up;
-        } else {
-            $('#navbar').stop().fadeOut();
-            $('form').stop().fadeOut();
-            up = !up;
-        }
-        //console.log(up);
-    } else if(newscroll < mypos  && up || $(window).scrollTop() <= 0) {
-        $('#navbar').stop().fadeIn();
-        $('form').stop().fadeIn();
-        up = !up;
-    }
-    mypos = newscroll;
-});
-    var $body = jQuery('body'); 
-    $(document)
-    .on('focus', 'input', function(e) {
-        $body.addClass('fixfixed');
-    })
-    .on('blur', 'input', function(e) {
-        $body.removeClass('fixfixed');
-    });
-    */
