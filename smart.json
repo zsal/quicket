@@ -1,6 +1,7 @@
 {
   "packages": {
     "pages": {},
-    "iron-router": {} 
+    "iron-router": {},
+    "router": {}
   }
 }

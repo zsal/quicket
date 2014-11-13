@@ -39,6 +39,7 @@ var mich_campus = {
 var upval_inc = .1;
 var newstuffscore = 1;
 var start = true;
+var start2 = 3;
 var newuser = false;
 var ITEMS_INCREMENT = 20;
 
@@ -48,13 +49,18 @@ var sort = {
 };
 
 
+
 Session.setDefault('itemsLimit', ITEMS_INCREMENT);
+Session.setDefault('online', -1);
 Session.setDefault('plat', -1);
 Session.setDefault('plng', -1);
 
+
 // in meters
 Session.setDefault('accuracy', 30);
-Session.setDefault('radius', 1250);
+Session.setDefault('radius', 100);
+
+
 
 Session.setDefault('total_quickets', 0);
 Session.setDefault("sort", sort['new']);
@@ -64,10 +70,29 @@ Tracker.autorun(function () {
     [Session.get('plng'), Session.get('plat'), Session.get('radius'), Session.get('itemsLimit')]);
   //console.log(Session.get('radius'));
   Meteor.subscribe("me", cookie);
+  Meteor.subscribe("yaks",
+     [Session.get('plng'), Session.get('plat'), Session.get('radius'), Session.get('itemsLimit')]);
+  Meteor.subscribe('userPresence');
+});
+
+UserPresence.data = function() {
+  return {
+    location: [ Session.get("plng") , Session.get("plat") ] 
+  };
+}
+
+Deps.autorun(function() {
+    var v = UserPresences.find({
+      'data.location': { 
+        $near :[ Session.get("plng"), Session.get("plat") ],
+        $maxDistance: Session.get("radius") 
+      }
+    });
+    Session.set("online", v.count());
+    //console.log(UserPresences.find().count(), Session.get("online"));
 });
 
 Meteor.subscribe("website");
-
 
 // identify user
 var cookie = localStorage.getItem('uid');
@@ -82,117 +107,139 @@ Handlebars.registerHelper('session',function(input){
 });
 
 // get user location
-var watchID = navigator.geolocation.watchPosition(function(position) {
-    Session.set('plat', position.coords.latitude);
-    Session.set('plng', position.coords.longitude);
-    Session.set('accuracy', position.coords.accuracy);
-    Session.set('radius', Math.max(position.coords.accuracy, Session.get('radius')));
-    $("#overlay").delay(1000).fadeOut();
-    $("#outer").delay(2000).css('opacity', '1');
+Meteor.startup(function () {
+  var watchID = navigator.geolocation.watchPosition(function(position) {
+      Session.set('plat', position.coords.latitude);
+      Session.set('plng', position.coords.longitude);
+      Session.set('accuracy', Math.round(position.coords.accuracy));
+      //Session.set('radius', Math.max(Math.round(position.coords.accuracy), Session.get('radius') ));
+      $("#overlay").delay(1000).fadeOut();
+      $("#outer").delay(2000).css('opacity', '1');
 
-    // if ann arbor
-    if(position.coords.latitude > 42.24 && position.coords.latitude < 42.33 
-      && position.coords.longitude > -83.79 && position.coords.longitude < -83.666) {
-      $.each(mich_campus, function(key, val){
-        var closest = mich_campus[Session.get("closest")];
-        if (closest == null) {
-          closest = val;
-          Session.set("closest", key);
-        }
-        var place = Math.abs(val[0] - Session.get("plat")) + Math.abs(val[1] - Session.get("plng"));
-        var current = Math.abs(closest[0] - Session.get("plat")) + Math.abs(closest[1] - Session.get("plng"));
-        if (place < current) {
-          closest = val;
-          Session.set("closest", key);
-        }
-      });
-  }
-}, function(err) {
-  console.warn('ERROR(' + err.code + '): ' + err.message);
-},
-{
-  enableHighAccuracy: true,
-  maximumAge: 0
+      if(start2){
+        var x = document.getElementById("errorhandle");
+        x.innerHTML = "Found Location!"
+        initialize();
+        start2--;
+      }
+
+      
+
+  }, function(error) {
+    var x = document.getElementById("errorhandle");
+    switch(error.code) {
+          case error.PERMISSION_DENIED:
+              x.innerHTML = "User denied the request for Geolocation."
+              break;
+          case error.POSITION_UNAVAILABLE:
+              x.innerHTML = "Location information is unavailable."
+              break;
+          case error.TIMEOUT:
+              x.innerHTML = "The request to get user location timed out."
+              break;
+          case error.UNKNOWN_ERROR:
+              x.innerHTML = "An unknown error occurred."
+              break;
+      }
+    console.warn('ERROR(' + error.code + '): ' + error.message);
+  },
+  {
+    enableHighAccuracy: true,
+    maximumAge: 0
+  });
 });
 
 // populate feed
-Template.leaderboard.messages = function () {
-  var msglist; 
+Template.leaderboard.helpers({
 
-  if(Session.get('plat') == -1) {
-    return;
-  } 
-  if(Session.get('sort') == 'me') {
-    msglist = MessageDb.find({ $or: [ { author: cookie }, { voters: {$in: [cookie]} } ] });
-  } else {
-    msglist = MessageDb.find({ 
-      location:
-       { $near :
-          {
-            $geometry: { type: "Point",  coordinates: [ Session.get('plng'), Session.get('plat') ] },
-            $minDistance: 0,
-            $maxDistance: Session.get('radius')
-          }
-       }
-     } , Session.get("sort"));
-  }
-    
-    var msgarr = msglist.fetch();
-    if(msgarr[0]) {
-      $("#nothinghere").hide();
-      //newstuffscore = msgarr[Math.floor((msgarr.length - msgarr.length/2))].score;
-      Session.set('total_quickets', msglist.count());
+  'messages' : function() {
+    var msglist; 
+
+    if(Session.get('plat') == -1) {
+      return;
+    } 
+    if(Session.get('sort') == 'me') {
+      msglist = MessageDb.find({ $or: [ { author: cookie }, { voters: {$in: [cookie]} } ] });
     } else {
-      $("#nothinghere").show();
+      msglist = MessageDb.find({ 
+        location:
+         { $near :
+            {
+              $geometry: { type: "Point",  coordinates: [ Session.get('plng'), Session.get('plat') ] },
+              $minDistance: 0,
+              $maxDistance: Session.get('radius')
+            }
+         }
+       } , Session.get("sort"));
     }
+      
+      Session.set('total_quickets', msglist.count());
 
-    //sound.play();
-    //setTimeout(function() {sound.pause();}, 600);
+      //sound.play();
+      //setTimeout(function() {sound.pause();}, 600);
 
-    if(start) {
-      if(!newuser) {
-        $("#welcoming").alert('close');
+      if(start) {
+        if(!newuser) {
+          $("#welcoming").alert('close');
+        } 
+        start = false;
       }
-      start = false;
-    }
 
-    return msglist;
-};
+      return msglist;
+  },
 
-Template.leaderboard.selected_name = function () {
-  var message = MessageDb.findOne(Session.get("selected_message"));
-  return message && message.name;
-};
+  'selected_name' : function () {
+    var message = MessageDb.findOne(Session.get("selected_message"));
+    return message && message.name;
+  },
 
-Template.message.selected = function () {
-  return Session.equals("selected_message", this._id) ? "selected" : '';
-};
-
-Template.message.msgname = function(name) {
-  var element = name.linkify();
-  return new Handlebars.SafeString(element);
-}
-
-Template.message.msgtime = function(time) {
-  var resultstr = " ";
-
-  var diffMs = new Date() - new Date(time);
-  var diffDays = Math.round(diffMs / 86400000); // days
-  var diffHrs = Math.round((diffMs % 86400000) / 3600000); // hours
-  var diffMins = Math.round(((diffMs % 86400000) % 3600000) / 60000); // minutes
-
-  if(diffDays) {
-      resultstr += diffDays+"d";
-  } else if(diffHrs) {
-      resultstr += diffHrs+"h";
-  } else if(diffMins) {
-      resultstr += diffMins+"m";
-  } else {
-      resultstr += "just now";
+  'profilemode' : function () {
+    return Session.get("sort") == "me";
   }
 
-  return new Handlebars.SafeString(resultstr);
+});
+
+Template.message.helpers({
+  'selected' : function () {
+    return Session.equals("selected_message", this._id) ? "selected" : '';
+  },
+
+  'msgname' : function(name) {
+    var element = name.linkify();
+    return new Handlebars.SafeString(element);
+  },
+  'msgtime' : function(time) {
+    var resultstr = " ";
+
+    var diffMs = (new Date() - new Date(time))/1000;
+    var diffDays = Math.round(diffMs / 86400); // days
+    var diffHrs = Math.round((diffMs % 86400) / 3600); // hours
+    var diffMins = Math.round(((diffMs % 86400) % 3600) / 60); // minutes
+
+    if(diffDays) {
+        resultstr += diffDays+"d";
+    } else if(diffHrs) {
+        resultstr += diffHrs+"h";
+    } else if(diffMins) {
+        resultstr += diffMins+"m";
+    } else {
+        resultstr += "just now";
+    }
+
+    return new Handlebars.SafeString(resultstr);
+  }
+
+});
+/*
+Template.message.rendered = function() {
+    this.$(".message").hide()
+    setTimeout(function() {
+
+      this.$(".message").fadeIn({queue: false, duration: 300});;
+      this.$(".message").animate({top: "0px"}, 200);
+    }, 0);
 }
+*/
 
 Template.Sorting.events({
   'click #New' : function(e) {
@@ -212,58 +259,49 @@ Template.Sorting.events({
 Template.message.events({
   'click div #score': function () {
       Session.set("selected_message", this._id);
-      if(!this.voters) {
-        this.voters = [];
-        this.clicks = 0;
-      }
-      var canvote = this.voters.indexOf(cookie);
-      if (canvote === -1){
-        var upval = Website.find({name: {$in:['upval']}}).fetch()[0];
-        MessageDb.update(this._id, {$inc: {score: upval.num, clicks: 1}});
-        MessageDb.update(this._id, {$push: {voters: cookie}});
-        Website.update(upval._id, {$inc: {num: 1}});
-      }
+      Meteor.call("hop", cookie, this._id);
     }
+});
+
+Template.addMessage.helpers({
+
+  'imagepreview' : function() {
+    return Session.get("photo");
+  }
 });
 
 // post
 Template.addMessage.events = {
   'submit form': function (event, template) {
-    var userspost = messageText.value;
+    var msg = messageText.value;
 
-    if (messageText.value !== "" && Session.get('plat') != -1) {
-      MessageDb.insert({
-        name: messageText.value,
-        author: cookie,
-        score: newstuffscore,
-        time:(new Date).getTime(),
-        clicks: 0, 
-        voters: [cookie],
-        location: { type: "Point", coordinates: [ Session.get("plng") , Session.get("plat") ] } 
-      });
-      /*
-      //Parse Example for future integration
-      var Messages = Parse.Object.extend("Messages");
-      var msgs = new Messages();
-      msgs.set("name", messageText.value);
-      msgs.set("score", newstuffscore);
-      msgs.set("coord", new Parse.GeoPoint({latitude: Session.get('plat'), longitude: Session.get('plng')}));
-
-      msgs.save(null, {
-        success: function(gameScore) {
-          //alert('New object created with objectId: ' + gameScore.id);
-        },
-        error: function(gameScore, error) {
-          //alert('Failed to create new object, with error code: ' + error.message);
-        }
-      });
-      */
-      messageText.value = "";
-      
+    if(Session.get("photo")){
+      msg += "<br> " + Session.get("photo");
     }
 
+    Meteor.call("post", cookie, msg, Session.get("plng") , Session.get("plat"), function() {
+      messageText.value = "";
+    });
+    Session.set("photo", "");
     event.preventDefault();
     event.stopPropagation();
     return false; 
+  },
+
+  'click #photo' : function () {
+      var cameraOptions = {
+        width: 430,
+        height: 350
+      };
+
+      MeteorCamera.getPicture(cameraOptions, function (error, data) {
+        if(data) {
+          Session.set("photo", data);
+
+          /*Meteor.call("post", cookie, data, Session.get("plng") , Session.get("plat"), function() {
+            messageText.value = "";
+          });*/
+        }
+      });
   }
 };

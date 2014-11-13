@@ -6,66 +6,26 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
     <link rel="icon" type="image/png" href="http://s3.postimg.org/qen3mdtpb/cricketfill.png">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places,geometry"></script>
     <!-- link previewing -->
 </head>
 
 <body>
 
-    <nav class="navbar navbar-default" id="navbar" role="navigation">
-
-        <div class="container-fluid" style="margin:auto;">
-            <!-- Brand and toggle get grouped for better mobile display -->
-            <div class="navbar-header" >
-              <div data-toggle="collapse" data-target="#extra-space">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    
-                </button>
-                </div>
-                <a class="navbar-brand"  style="pull-left" href="">{{> navbar}}</a>
-                <a href="/getting-started.html" style="pull-right"><div id="logo" ></div></a>
-            </div>
-
-
-
-            <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-
-                <ul class="nav navbar-nav">
-                <!--<li><a style="text-align:center;" href="/getting-started.html">Getting Started with Quicket</a>
-                    </li>-->
-                
-                </ul>
-                <ul class="nav navbar-nav navbar-right">
-                 <li>           <p style="margin:auto; text-align:center;"> 
-                            {{session "total_quickets"}} posts within <strong> {{session "radius"}} </strong> meters of {{> map}} (near {{session "closest"}})
-                            </p>
-                        
-                        <input  style="max-width:80%; margin:auto;" type='range' min='{{session "accuracy"}}' max='3009' value='1250' id='fader' step='10' onchange="upRadius(this.value)">
-                        </li>
-                    
-                    
-                </ul>
-
-            </div>
-            <!-- /.navbar-collapse -->
+        <div id="outernav" class="" style="margin:auto;">
+            {{> navbar}}
         </div>
-        <!-- /.container-fluid -->
-    </nav>
-
+            
     <div id="overlay">
         <img src="img/cricket_watermark.png" />
-        <p> Finding your location... </p>
+        <p id="errorhandle"> Finding your location... </p>
+        <a href="/getting-started.html">What is Quicket?</a>
         <div class="loading">
             <div></div>
         </div>
     </div>
-{{> addMessage}}
-    <div id="outer" >
+    
+    <div  >
         
         <script>
 
@@ -84,44 +44,212 @@
             ga('create', 'UA-54737425-1', 'auto');
             ga('send', 'pageview');
 
+            var circle;
+
             function upRadius(val) {
                 Session.set("radius", +val);
+                circle.setRadius(+val);
+                map.fitBounds(circle.getBounds());
             }
+
+            var map;
+            var infowindow;
+
+            function initialize() {
+              var pyrmont = new google.maps.LatLng(Session.get("plat"), Session.get("plng"));
+              map = new google.maps.Map(document.getElementById('map-canvas'), {
+                center: pyrmont,
+                zoom: 17,
+                scrollwheel: false,
+                navigationControl: false,
+                mapTypeControl: false,
+                scaleControl: false,
+                draggable: false,
+                disableDoubleClickZoom: true,
+                streetViewControl: false,
+                zoomControl: false
+
+              });
+
+              var request = {
+                location: pyrmont,
+                radius: 62
+              };
+
+              circle = new google.maps.Circle({
+                map: map,
+                strokeColor: "darkgreen",
+                strokeOpacity: 0.8,
+                strokeWeight: 2,
+                fillColor: "darkgreen",
+                fillOpacity: 0.35,
+                center: pyrmont,
+                radius: Session.get("radius")
+              });
+              map.fitBounds(circle.getBounds());
+              /*
+              google.maps.event.addListener(circle, 'click', function() {
+                infowindow.setContent("You are here");
+                infowindow.open(map, this);
+              });*/
+
+              infowindow = new google.maps.InfoWindow();
+              var service = new google.maps.places.PlacesService(map);
+              service.nearbySearch(request, callback);
+            }
+
+            function callback(results, status) {
+                console.log(results)
+              if (status == google.maps.places.PlacesServiceStatus.OK) {
+                    //console.log(results[i]);
+                    Session.set("my place", results[0].name);
+                    Session.set("campus place", results[0].vicinity);
+                    //createMarker(results[0]);
+              }
+            }
+
+            function createMarker(place) {
+              var placeLoc = place.geometry.location;
+              var marker = new google.maps.Marker({
+                map: map,
+                position: place.geometry.location
+              });
+
+              google.maps.event.addListener(marker, 'click', function() {
+                infowindow.setContent(place.name);
+                infowindow.open(map, this);
+              });
+            }
+
         </script>
 
         
         {{> leaderboard}}
+        
     </div>
 
+  
+    
 </body>
 
 <template name="leaderboard">
+    <div id="outer">
+      
+          <!--<div id="welcoming" class="alert alert-success" role="alert">
+                <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <div id="logo" ></div>
+                <p style="text-align:center">  Welcome to Quicket! <br> Post your thoughts or a cool link to share with people nearby. <a href="/getting-started.html" class="alert-link">Learn More</a></p>
+            </div>-->
+            <div class="collapse in" id="bs-example-navbar-collapse-1">
+
+       
+             <div id="mapbox" class="alert alert-success" role="alert">
+            <!--<img src="https://maps.googleapis.com/maps/api/streetview?size=300x200&location={{session 'plat'}},{{session 'plng'}}">-->
+                <div style="height:200px;" id="map-canvas"></div>
+                <!-- <p style="margin:auto; text-align:center;"> 
+                            {{session "total_quickets"}} posts within <strong> {{session "radius"}} </strong> meters of <a style="cursor: pointer; font-color:blue" >{{session "my place"}}</a>
+                            </p>-->
+
+                          
+                        
+                       <!-- <input  style="max-width:80%; margin:auto;" type='range' min='{{session "accuracy"}}' max='1009' value='{{session "radius"}}' id='fader' step='10' onchange="google.maps.event.trigger(map, 'resize'); upRadius(this.value); "> -->
+            </div>
+             </div>
+            
+  <div id="padder">
+  {{#if profilemode}}
+    {{> myProfile}}
+    {{else}}
+    {{> addMessage}}
+  {{/if}}
     <div class="leaderboard" style=" max-height:100%">
-        <div id="welcoming" class="alert alert-info" role="alert">
-        <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-        <p style="text-align:center"> Welcome to Quicket! <br> Post your thoughts or a cool link to share with people nearby. <a href="/getting-started.html" class="alert-link">Learn More</a></p>
+      {{> Sorting}} 
+        {{#each messages}} 
+            {{> message}} 
+        {{else}}
+        <div id="nothinghere" style=" text-align:center; opacity:.7;">
+            <h5 >theres nothing here...</h5>
+            <h5>nows your chance to be first!</h5>
+            <img style="max-width:99%; max-height: 99%" src="img/quicket_chat_class.png">
+        </div>
+        {{/each}}
     </div>
-    <div id="nothinghere" style=" text-align:center; opacity:.7;">
-    <h5 >theres nothing here...</h5>
-    <h5>nows your chance to be first!</h5>
-    <img style="max-width:99%; max-height: 99%" src="img/quicket_chat_class.png">
-    </div>
-        {{#each messages}} {{> message}} {{/each}}
+    <!--{{> Footer}}-->
     </div>
 
+
+            
+</div>
+
+</template>
+
+<template name="radius">
+<span id="rangeselect">
+  <div id="rangeselect" class="btn-group default" data-toggle="buttons">
+  <button id="mapmarker" class="btn btn-default " type="button" onclick="$('#bs-example-navbar-collapse-1').toggle(); initialize();">
+                
+                    <span class="glyphicon glyphicon-map-marker"></span>
+
+  
+                    
+                </button>
+    <label id="houserange" class="btn btn-default active" onclick="upRadius(100);">
+      <input type="radio" name="sort"  checked> <span class="glyphicon glyphicon-home"></span> {{session "my place"}}
+    </label>
+    <label id="campusrange" class="btn btn-default" onclick="upRadius(1000);">
+      <input type="radio" name="sort" > 
+    <span class="glyphicon glyphicon-bullhorn"></span> {{session "campus place"}}
+    </label>
+    
+  </div>
+  </span>
 </template>
 
 <template name="navbar">
     <!--<span> My location: {{session "plat"}}, {{session "plng"}} </span>-->
-    <small> {{> Sorting}} </small>
+    {{> radius}}
+     <span class=" pull-right">
+     <div id="onlineusers">
+            <span> <strong>{{session "online"}}</strong></span>
+            <span class="glyphicon glyphicon-user"></span>
+
+            <!--
+                <button class="btn btn-default " type="button" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                
+                    <span class="glyphicon glyphicon-map-marker"></span>
+                    <span class="icon-bar"></span>
+
+  
+                    
+                </button>
+                -->
+                </div>
+                </span>
+
     
 </template>
 
-
+<template name="myProfile">
+<div id="messageadding">
+<input type="text" class="form-control" style="width:100%" id="messageText" maxlength="140" placeholder="Type a message..." autofocus/>
+    <div id="sortdiv" class="btn-group default" data-toggle="buttons">
+    <label id="New" class="btn btn-default active">
+      <input type="checkbox" name="sort" checked> My Posts
+    </label>
+    <label id="Hot" class="btn btn-default">
+      <input type="checkbox" name="sort" checked> My Hops
+    </label>
+    <label id="Me" class="btn btn-default">
+      <input type="checkbox" name="sort" > When I'm there
+    </label>
+  </div>
+  </div>
+</template>
 
 
 <template name="message">
     <div class="message {{selected}}">
+
 
         <div class="name" style="max-width:100%">
           {{msgname name}}
@@ -131,23 +259,20 @@
         <div style="text-align:right; font-size: .9em; ">
 
             <div style="float:left"><span style="text-align:left" class="glyphicon glyphicon-time"></span><span>{{msgtime time}} </span>
+            
             </div>
             <span id="score" class="badge score" style="height:200%; font-color:white">{{clicks}}</span>
         </div>
         </small>
+        
     </div>
     <div class="divider"></div>
-</template>
-
-<template name="map">
-
- <a href="http://www.openstreetmap.org/?lat={{session 'plat'}}&lon={{session 'plng'}}&zoom=100&layers=M" target="_blank">My Location</a>
-
+    
 </template>
 
 
 <template name="Sorting">
-  <div class="btn-group btn-group-sm default" data-toggle="buttons">
+  <div id="sortdiv" class="btn-group btn-group-sm default" data-toggle="buttons">
     <label id="New" class="btn btn-default active">
       <input type="radio" name="sort" checked> New
     </label>
@@ -162,16 +287,55 @@
 
 
 <template name="addMessage">
-    <div class ="affix-bottom" id="outer">
-    <form>
-        
+    <div id="messageadding">
+
+    
+        <form>
+        <input type="text" class="form-control" style="width:100%" id="messageText" maxlength="140" placeholder="Type a message..." autofocus/>
+        {{#if imagepreview}}
+              {{> imgpreview}}
+        {{/if}}
         <div class="input-group">
-          <input type="text" class="form-control" style="width:100%" id="messageText" maxlength="140" autofocus/>
           <span class="input-group-btn">
-            <button class="btn btn-default" type="submit">Post</button>
+            <button class="btn btn-default" id="text" type="button"><span class="glyphicon glyphicon-font"></span></button>
+          </span>
+          <span class="input-group-btn">
+            <button class="btn btn-default" id="photo" type="button">
+              {{> cameraicon}}
+            </button>
+          </span>
+          <span class="input-group-btn">
+            <button class="btn btn-default" id="send" type="submit">Send</button>
           </span>
         </div>
         </form>
 
     </div>
+</template>
+
+<template name="imgpreview">
+<div id="welcoming" class="alert" role="alert">
+                <button type="button" class="close" onclick="Session.set('photo', '')" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <div id="imgcont" style="background-image:url({{session 'photo'}})"></div>
+            </div>
+    
+    </template>
+
+    <template name="cameraicon">
+   <span class="glyphicon glyphicon-camera"></span>
+    </template>
+
+<template name="Footer">
+  <div class="social-media text-center" >
+    <ul style="background-color:darkgreen" class="unstyled list-layout list-inline">
+        <li class="about-us"><a href="/getting-started.html" target="_blank" rel="nofollow"><span class="sprite-page-actions facebook"></span><span class="label">What is Quicket?</span></a></li>
+        <li class="social facebook-recommend"><a href="https://www.facebook.com/sharer.php?u=http%3A%2f%2fqckt.me" target="_blank" rel="nofollow"><span class="sprite-page-actions facebook"></span><span class="label">Share on FB</span></a></li>
+        <li class="social twitter-recommend"><a href="http://twitter.com/share?text=what are your neighbors saying?&url=http://qckt.me&hashtags=" target="_blank" rel="nofollow"><span class="sprite-page-actions facebook"></span><span class="label">Tweet</span></a></li>
+        
+
+    </ul>
+    <div id="copyright" class="row-space-top-2 text-muted">
+      © Qckt.
+    </div>
+  </div>
 </template>
