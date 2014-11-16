@@ -1,3 +1,5 @@
+
+
 body {
     font-family: 'Source Sans Pro', sans-serif;
     font-weight: 400;
@@ -17,12 +19,17 @@ body {
 
 }
 
+#slider {
+    display: none;
+}
+
 #rangeselect{
     margin: auto;
     text-align:  center;
 }
 
 #onlineusers {
+    text-align: right;
     background: darkgreen;
     color: white;
     padding:.5em;
@@ -32,6 +39,14 @@ body {
     width:100% !important;
 }
 #sortdiv>.btn {
+    width:33.33% !important;
+    margin: 0 !important;
+}
+
+#justmediv{
+    width:100% !important;
+}
+#justmediv>.btn {
     width:33.33% !important;
     margin: 0 !important;
 }
@@ -55,16 +70,110 @@ body {
     box-shadow: inset 0 0px 0px rgba(0,0,0,.075),0 0 0px rgba(102,175,233,.6) !important;
 }
 
+#outernav{
+    min-width: 300px;
+}
+
+#innernav{
+        max-width: 850px;
+        min-width: 300px;
+        overflow: hidden;
+        height: 2.8em;
+        margin: auto;
+    }
+@media screen and (min-width:700px) {
+    #outernav {
+        width: 100%;  
+        top: 0;
+        margin: auto;
+        position: fixed;
+        padding-bottom: .5em;
+        padding-left: 4em;
+
+        padding-right: 4em;
+        border-bottom-right-radius: 1em;
+        border-bottom-left-radius: 1em;
+        box-shadow: rgba(0, 0, 0, 0.298039) 0px 1px 3px 0px;
+        z-index: 100;
+        text-align: center;
+    }
+
+
+    #mapbox{
+        border: 1px solid darkgreen; 
+    }
+
+    #slider{
+        display: block;
+    }
+
+    #outer{
+        padding-top: 4em;
+    }
+
+    #mediacontent{
+
+        min-width: 5em;
+        min-height: 5em;
+
+    }
+
+    #map-canvas{
+        height: 400px;
+    }
+
+
+    .message .name {
+        font-size: 1.15em;
+    }
+
+    #padder{
+
+        max-width: 650px;
+    }
+
+
+    /*
+
+    #mapbox{
+        position: absolute;
+        width: 25em;
+        left: 57%;
+        padding: 1em;
+    }
+
+    #outer{
+        position: relative;
+        left: -150px;
+    }
+    */
+
+    #houserange, #campusrange, #mapmarker{
+        padding:.5em;
+        border-radius: 0px !important;
+        max-width: 17.5em;
+        overflow: hidden;
+
+    }   
+}
+
 #mapbox {
-    margin: 0em .5em;
-    padding: 0em .5em;
-    
+    margin: .5em .5em;
+    padding: .5em .5em;
+}
+
+#map-canvas{
+    min-height: 400px; 
+    height: 100%;
 }
 
 #welcoming {
     margin: auto;
 }
-
+#previewbox {
+    margin: auto;
+    display: inline-block;
+}
 a {
     text-decoration: none;
     transition-duration: 0.25s;
@@ -75,39 +184,25 @@ strong {
     font-weight: 700;
 }
 
-img {
-} 
 
-#imgcont{
-  width:100%;
-  height:12em;
-  margin:auto;
-  min-height:100%;
-  background-color: white;
-  border:.1em solid #d1d1d1;
-  border-color: gray;
+#mediacontent{
+  height: 3.8em;
+  width: 3.6em;
+  color: black;
+  margin: 0 !important;
   background-position: center;
+  background-size: cover;
   background-repeat: no-repeat;
-  border-radius: 4%;
+  border-radius: 3em;
+  -moz-user-select: none; 
+        -khtml-user-select: none; 
+        -webkit-user-select: none; 
+        -o-user-select: none; 
+  display: inline-block;
 }
 
-#imgpreview{
-  width:100%;
-  height:2.5em;
-  margin:auto;
-  min-height:100%;
-  border:5px solid #d1d1d1;
-  background-color: white;
-border-color: gray;
-  background-position: center;
-  background-repeat: no-repeat;
-  border-radius: 5px;
-
-}
-
-.divider {
-    border-bottom:1px solid #d1d1d1;
-    height: 1px;
+#mediapreview{
+  display: inline-block;
 }
 
 #typer {
@@ -138,26 +233,31 @@ border-color: gray;
     border-radius: 0px !important;
 }
 
-#text, #photo, #send{
+#addlink, #addphoto, #send{
     border: 0;
     border-top: 1px solid darkgray !important;
     border-radius: 0px !important;
     width:100%;
     color: darkgreen !important;
     background-color: white !important;
+}
 
+#text.active, #photo.active, #send.active{
+    font-weight: bold !important;
 }
 
 #houserange, #campusrange, #mapmarker{
     padding:.5em;
     border-radius: 0px !important;
+    max-width: 7.5em;
+    overflow: hidden;
 
 
 }
 
 #mapmarker {
-        border: 0;
-        margin:1px;
+    border: 0;
+    margin:1px;
     background-color: darkgreen !important;
     color:white !important;
 }
@@ -187,31 +287,50 @@ border-color: gray;
 }
 
 #outer {
-    max-width: 500px;
+    max-width: 850px;
     margin: auto; 
+    min-width: 300px;
     
 }
 
 #padder{
-    padding: 0em .5em;
+    padding: 0em 0em;
+
+    max-width: 560px;
+    margin: auto;
 }
 
 #messageadding{
     background-color: #DDEDDD ;
-    border-bottom: 1px solid #ADCBAB;
+    border: 1px solid #ADCBAB;
     padding-left: 1em;
     padding-right: 1em;
     padding-top: 1em;
     padding-bottom: .5em;
+    margin-top: 1em;
     border-top-left-radius: 1em;
     border-top-right-radius: 1em;
 
+}
 
+#messagefeet{
+    padding-top: .5em;
+
+    padding-bottom: .25em;
+}
+
+.camera-popup video {
+max-width:250px;
+}
+
+#taskbar {
+    left:50%;
 }
 
 #outernav {
-    max-width: 800px;
-    margin:auto;   
+
+        text-align: center;
+    margin-bottom: 1em;
     background-color: darkgreen;
     padding-bottom: .5em;
     padding-top: .5em; 
@@ -221,37 +340,39 @@ border-color: gray;
 
 }
 
-@media screen and (min-width:768px) {
-    #outernav {
-        max-width: 800px;
-        margin: 1em auto;   
-        background-color: darkgreen;
-        padding-bottom: .5em;
-        padding-left: 4em;
-        padding-right: 4em;
-        border-bottom-right-radius: 1em;
-        border-bottom-left-radius: 1em;
-        box-shadow: rgba(0, 0, 0, 0.298039) 0px 1px 3px 0px;
-    }
-}
 .message {
-    padding-left: 1em;
-    padding-right: 1em;
-    padding-top: 1em;
-    padding-bottom: .25em;
-
-
-
+    padding-left: 2em;
+    padding-top: .25em;
     background-color: white;
-    /*display: none; 
-    position: relative;
-    top: -20px;*/
+    border-bottom:1px solid #d1d1d1;
+}
+
+.row{
+    width: 100%;
+    margin: 0;
 }
 
 .message .name {
-    font-size: 1.15em;
+    vertical-align: text-bottom;
+    font-size: .9em;
+    padding-left: 1em;
     padding-bottom: .5em;
+    max-height: 10em;
+    overflow: hidden;
+    padding-top: .5em;
+    width: 75%;
+    display: inline-block;
     word-wrap: break-word;
+}
+
+@media screen and (max-width:360px) {
+    .message .name {
+        width: 70%;
+    }
+    .message {
+    padding-left: 1.3em;
+}
+
 }
 
 
@@ -259,11 +380,79 @@ border-color: gray;
     background-color: lightgreen;
 }
 
-.message .score:hover {
+
+#score{
+    float:right;
+    opacity: .5;
+    position: relative;
+    margin:auto;
+  top: 50%;
+  margin-right: .3em;
+  transform: translateY(-50%);
+     font-color:darkgreen;
+     width: 1em;
+     height: 1em;
+     border-radius: 3em;
+     top:.5em;
+     font-size: 1.1em;
+}
+
+#numscore{
+    color: darkgreen;
+    margin:auto;
+    width: 1.6em;
+    position: relative;
+    left:-.49em;
+    text-align: center;
+
+}
+
+#upvote{
+    position: relative;
+    left:.5em;
+
+}
+#upvote:after{
+    position:absolute;
+    top:10px;
+    right:10px;
+    left:10px;
+    bottom:10px;
+}
+#upvote:before{
+    position:absolute;
+    top:-10px;
+    right:-10px;
+    left:-10px;
+    bottom:-10px;
+}
+#downvote{
+    position: relative;
+    left:.4em;
+    top:-.3em;
+
+
+}
+#downvote:after{
+    position:absolute;
+    top:10px;
+    right:10px;
+    left:10px;
+    bottom:10px;
+}
+#downvote:before{
+    position:absolute;
+    top:-10px;
+    right:-10px;
+    left:-10px;
+    bottom:-10px;
+}
+
+.message #score:hover {
     cursor: pointer; 
           -moz-animation:bounceOut .4s linear;
           -webkit-animation:bounceOut .4s linear;
-          box-shadow: 0 0 0 5px #6DCB8B ;
+          box-shadow: 1 1 1 5px #6DCB8B ;
         }
 
 .details, .none {
@@ -275,6 +464,9 @@ border-color: gray;
     margin: 50px 10px;
     padding: 10px 0px;
 }
+.page{
+    display: block;
+}
 
 .none {
     color: #777;
@@ -283,6 +475,7 @@ border-color: gray;
 .inc {
   cursor: pointer;
 }
+
 
 /*   Loading Animation      */
 

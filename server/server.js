@@ -10,6 +10,32 @@ Meteor.startup(function () {
   }
 });
 
+getHouseMessages = function (loc) {
+  if(loc[0] === - 1) {
+    return MessageDb.find({}, {limit: 1});
+  }
+
+  loc[3] = Math.min(+loc[3], 100);
+  loc[2] = Math.min(1000, +loc[2]);
+  console.log("msgs:", loc);
+
+  var v = MessageDb.find({ 
+      location: { 
+        $geoWithin :
+            {
+             $centerSphere : [ [ loc[0], loc[1] ] , 100/6378100 ] 
+           }
+      },
+      author: {$ne: "yy"},
+      privacy: false
+     } ,
+     {sort: {time: -1, score: -1, clicks: -1, name: 1, location: 1}, limit: 50 });
+
+  //console.log("getmessages has " + v.fetch().length)
+
+  return v;
+}
+
 getMessages = function (loc) {
   if(loc[0] === - 1) {
     return MessageDb.find({}, {limit: 1});
@@ -26,7 +52,9 @@ getMessages = function (loc) {
              $centerSphere : [ [ loc[0], loc[1] ] , 1000/6378100 ] 
            }
       },
-      author: {$ne: "yy"}
+      author: {$ne: "yy"},
+      privacy: false,
+      house: {$gt: 100}
      } ,
      {sort: {time: -1, score: -1, clicks: -1, name: 1, location: 1}, limit: 50 });
 
@@ -58,7 +86,7 @@ getYaks = function(loc) {
 }
 
 Meteor.publish("yaks", getYaks);
-
+Meteor.publish("housemessages", getHouseMessages);
 Meteor.publish("messages", getMessages);
 
 Meteor.publish("website", function() {
@@ -81,18 +109,25 @@ Meteor.publish("me", function (cookie) {
 
 // todo: add Meteor methods instead of insecure client
 Meteor.methods({
-  post: function(_cookie, _name, _lng, _lat) {
+  post: function(_cookie, _name, _media, _lng, _lat, _rad, _priv) {
 
-    if(_name.trim() && _lat != -1) {
+    if((_name.trim() || _media ) && _lat != -1) {
+      var upval = Website.find({name: {$in:['upval']}}).fetch()[0];
+      console.log(_name.imageify());
+
       MessageDb.insert({
           name: _name,
+          media: _media || _name.imageify(),
           author: _cookie,
-          score: 1,
+          score: upval.num,
           time:(new Date).getTime(),
           clicks: 0, 
-          voters: [_cookie],
-          location: { type: "Point", coordinates: [ _lng , _lat ] } 
+          voters: [],
+          location: { type: "Point", coordinates: [ _lng , _lat ] },
+          house: _rad,
+          privacy: _priv
         });
+      Website.update(upval._id, {$inc: {num: 1}});
 
       /*
       //Parse Example for future integration
@@ -117,12 +152,13 @@ Meteor.methods({
 
     return false;
   },
-  hop: function(cookie, msgid) {
+  hop: function(cookie, msgid, posneg) {
 
     var canvote = MessageDb.find({_id: msgid}).fetch()[0].voters.indexOf(cookie);
-      if (canvote === -1){
+    //console.log(posneg, Math.abs(posneg));
+      if (canvote === -1 && Math.abs(posneg) == 1){
         var upval = Website.find({name: {$in:['upval']}}).fetch()[0];
-        MessageDb.update(msgid, {$inc: {score: upval.num, clicks: 1}});
+        MessageDb.update(msgid, {$inc: {score: posneg*upval.num, clicks: posneg*1}});
         MessageDb.update(msgid, {$push: {voters: cookie}});
         Website.update(upval._id, {$inc: {num: 1}});
       }

@@ -32,6 +32,7 @@ Meteor.startup(function () {
 	    var lastfree = Website.find({name: 'lastfree'}).fetch()[0].num;
 	    console.log(msgname);
 	    if(lastfree !== msgname) {
+	    	var upval = Website.find({name: {$in:['upval']}}).fetch()[0];
 	    	MessageDb.insert({
 				name: msgname, 
 				clicks: 0, 
@@ -39,7 +40,7 @@ Meteor.startup(function () {
 				location: { type: "Point", coordinates: [ -83.738196 , 42.276922 ]}, 
 				time: (new Date).getTime(), 
 				voters: [], 
-				score: 100
+				score: upval
 			});
 
 	    	Website.update({"name": 'lastfree'}, {$set: {"num": msgname}});
