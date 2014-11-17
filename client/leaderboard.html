@@ -29,13 +29,11 @@
 </body>
 
 <template name="main">
-<div>
     {{>swipe Swiper=Swiper}}
-    </div>
 </template>
 
 <template name="GoogleMap">
-    <div id="mapbox" class="alert alert-success" role="alert">
+    <div id="mapbox" class="alert alert-success no-swipe" role="alert">
             <!--<img src="https://maps.googleapis.com/maps/api/streetview?size=300x200&location={{session 'plat'}},{{session 'plng'}}">-->
                 <div id="map-canvas"></div>
                 <div id="slider">
@@ -53,7 +51,7 @@
 
 <template name="leaderboard">
 {{> navbar}}
-      <div id="outer">  
+      <div id="outer" class="no-swipe">  
           
   <div id="padder">
   {{#if profilemode}}
@@ -81,9 +79,12 @@
 </div>
 
 </template>
-<template name="Settings">
+
+
+<template name="settings">
 <div id="outernav" class="" style="margin:auto;">
       <div id="innernav">
+      {{> radius}}
       <button id="mapmarker" class="btn btn-default pull-right" type="button" onclick="Swiper.moveRight();">
                 
                      <span class="glyphicon glyphicon-chevron-right pull-right" ></span>
@@ -101,35 +102,55 @@
 
 </template>
 
+<template name="profilepage">
+<div id="outernav" class="" style="margin:auto;">
+      <div id="innernav">
+      
+      <button id="mapmarker" class="btn btn-default pull-left" type="button" onclick="Swiper.moveRight();">
+                
+                     <span class="glyphicon glyphicon-chevron-left pull-left" ></span>
+
+  
+                    
+                </button>
+                {{> radius}}
+     
+      </div>
+
+     </div>
+     <div id="outer">
+  {{> GoogleMap}}
+  </div>
+</template>
+
 <template name="radius">
-<span id="rangeselect">
-<button id="mapmarker" class="btn btn-default pull-left" type="button" onclick="Swiper.moveLeft(); initialize_map();">
+
+  <div id="rangeselect" class="btn-group default" data-toggle="buttons">
+  
+    
+      <label id="houserange" class="btn btn-default active">
+        <input type="radio" name="sort"  checked> <!--<span class="glyphicon glyphicon-home"></span> -->
+        {{session "my place"}}
+      </label>
+      <label id="campusrange" class="btn btn-default">
+        <input type="radio" name="sort" > 
+      <!--<span class="glyphicon glyphicon-bullhorn"></span>--> {{session "campus place"}}
+      </label>
+    
+  </div>
+</template>
+
+<template name="navbar">
+    <!--<span> My location: {{session "plat"}}, {{session "plng"}} </span>-->
+    <div id="outernav" class="" >
+      <div id="innernav">
+      <button id="mapmarker" class="btn btn-default pull-left" type="button" onclick="Swiper.moveLeft(); initialize_map();">
                 
                     <span class="glyphicon glyphicon-map-marker"></span>
 
   
                     
                 </button>
-  <div id="rangeselect" class="btn-group default" data-toggle="buttons">
-  
-    
-      <label id="houserange" class="btn btn-default active">
-        <input type="radio" name="sort"  checked> <span class="glyphicon glyphicon-home"></span> 
-        {{session "my place"}}
-      </label>
-      <label id="campusrange" class="btn btn-default">
-        <input type="radio" name="sort" > 
-      <span class="glyphicon glyphicon-bullhorn"></span> {{session "campus place"}}
-      </label>
-    
-  </div>
-  </span>
-</template>
-
-<template name="navbar">
-    <!--<span> My location: {{session "plat"}}, {{session "plng"}} </span>-->
-    <div id="outernav" class="" style="margin:auto;">
-      <div id="innernav">
       {{> radius}}
      <span id="onlineusers" class="pull-right">
               <span> <strong>{{session "online"}}</strong></span>
@@ -230,9 +251,11 @@
     <label id="Hot" class="btn btn-default">
       <input type="radio" name="sort" > Hot
     </label>
+    <!--
     <label id="Me" class="btn btn-default">
       <input type="radio" name="sort" > Just Me
     </label>
+    -->
   </div>
 </template>
 

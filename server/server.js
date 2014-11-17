@@ -152,6 +152,34 @@ Meteor.methods({
 
     return false;
   },
+  yy: function(_name, _lat, _lng, _likes, _time) {
+
+    if(_name) {
+      //var upval = Website.find({name: {$in:['upval']}}).fetch()[0];
+      //console.log(_name.imageify());
+
+      if(MessageDb.findOne({name:_name, time:_time})) {
+        return false;
+      }
+
+      MessageDb.insert({
+          name: _name,
+          media: "https://pbs.twimg.com/profile_images/487613331360858115/XP1PspM3.png",
+          author: "yy",
+          score: _likes,
+          time: _time,
+          clicks: _likes, 
+          voters: [],
+          location: { type: "Point", coordinates: [ _lng , _lat ] },
+          house: 1000,
+          privacy: false
+        });
+
+      return true;
+    }
+
+    return false;
+  },
   hop: function(cookie, msgid, posneg) {
 
     var canvote = MessageDb.find({_id: msgid}).fetch()[0].voters.indexOf(cookie);

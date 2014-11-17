@@ -39,7 +39,7 @@ body {
     width:100% !important;
 }
 #sortdiv>.btn {
-    width:33.33% !important;
+    width:50% !important;
     margin: 0 !important;
 }
 
@@ -91,8 +91,10 @@ body {
         padding-left: 4em;
 
         padding-right: 4em;
-        border-bottom-right-radius: 1em;
+        
+        /*border-bottom-right-radius: 1em;
         border-bottom-left-radius: 1em;
+        */
         box-shadow: rgba(0, 0, 0, 0.298039) 0px 1px 3px 0px;
         z-index: 100;
         text-align: center;
@@ -351,7 +353,10 @@ max-width:250px;
     width: 100%;
     margin: 0;
 }
-
+.page{
+    height: 100%;
+    overflow: scroll;
+}
 .message .name {
     vertical-align: text-bottom;
     font-size: .9em;
@@ -463,9 +468,6 @@ max-width:250px;
     border-width: 4px;
     margin: 50px 10px;
     padding: 10px 0px;
-}
-.page{
-    display: block;
 }
 
 .none {

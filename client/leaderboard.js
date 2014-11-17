@@ -14,6 +14,33 @@ var sort = {
 var circle;
 var map;
 var infowindow;
+Swiper = new Swipe(['settings', 'leaderboard', 'profilepage']);
+
+Template.main.helpers({
+  Swiper: function() {
+    return Swiper;
+  }
+});
+
+  
+
+Template.main.rendered = function() {
+Swiper.setPage('leaderboard');
+Swiper.moveRight();
+Swiper.moveLeft();
+  Tracker.autorun(function() {
+    if (Swiper.pageIs('leaderboard')) {
+      Swiper.leftRight('settings', 'profilepage')
+    }
+
+    else if (Swiper.pageIs('settings')) {
+      Swiper.leftRight(null, 'leaderboard')
+    }
+     else if (Swiper.pageIs('profilepage')) {
+      Swiper.leftRight('leaderboard', null)
+    }
+  });
+};
 
 
 Session.setDefault('itemsLimit', ITEMS_INCREMENT);
@@ -34,6 +61,8 @@ Session.setDefault('total_quickets', 0);
 Session.setDefault("sort", sort['new']);
 // get user location
 Meteor.startup(function () {
+
+  Swiper.setPage('leaderboard');
   var watchID = navigator.geolocation.watchPosition(function(position) {
       Session.set('plat', position.coords.latitude);
       Session.set('plng', position.coords.longitude);
@@ -49,6 +78,7 @@ Meteor.startup(function () {
         start2--;
       }
       map.setCenter(new google.maps.LatLng(Session.get("plat"), Session.get("plng")));
+      circle.setCenter(new google.maps.LatLng(Session.get("plat"), Session.get("plng")));
   }, function(error) {
     var x = document.getElementById("errorhandle");
     switch(error.code) {
@@ -96,7 +126,7 @@ function upRadius(val) {
     map.fitBounds(circle.getBounds());
 }
 
-Template.navbar.events({
+Template.radius.events({
   'click #houserange' : function() {
       var rad = Math.max(Math.round(Session.get("accuracy")),100)
       Session.set("radius", rad);
@@ -269,28 +299,7 @@ Handlebars.registerHelper('session',function(input){
   return Session.get(input);
 });
 
-Swiper = new Swipe(['leaderboard', 'Settings']);
 
-Template.main.helpers({
-  Swiper: function() {
-    console.log("hi");
-    return Swiper;
-  }
-});
-Template.main.rendered = function() {
-  console.log("HI");
-  Swiper.setPage('leaderboard');
-
-  Tracker.autorun(function() {
-    if (Swiper.pageIs('leaderboard')) {
-      Swiper.leftRight('Settings', null)
-    }
-
-    else if (Swiper.pageIs('Settings')) {
-      Swiper.leftRight(null, 'leaderboard')
-    }
-  });
-};
 
 // populate feed
 Template.leaderboard.helpers({
