@@ -14,34 +14,6 @@ var sort = {
 var circle;
 var map;
 var infowindow;
-Swiper = new Swipe(['settings', 'leaderboard', 'profilepage']);
-
-Template.main.helpers({
-  Swiper: function() {
-    return Swiper;
-  }
-});
-
-  
-
-Template.main.rendered = function() {
-Swiper.setPage('leaderboard');
-Swiper.moveRight();
-Swiper.moveLeft();
-  Tracker.autorun(function() {
-    if (Swiper.pageIs('leaderboard')) {
-      Swiper.leftRight('settings', 'profilepage')
-    }
-
-    else if (Swiper.pageIs('settings')) {
-      Swiper.leftRight(null, 'leaderboard')
-    }
-     else if (Swiper.pageIs('profilepage')) {
-      Swiper.leftRight('leaderboard', null)
-    }
-  });
-};
-
 
 Session.setDefault('itemsLimit', ITEMS_INCREMENT);
 Session.setDefault('online', -1);
@@ -61,8 +33,8 @@ Session.setDefault('total_quickets', 0);
 Session.setDefault("sort", sort['new']);
 // get user location
 Meteor.startup(function () {
+  $('#mapbox').hide();
 
-  Swiper.setPage('leaderboard');
   var watchID = navigator.geolocation.watchPosition(function(position) {
       Session.set('plat', position.coords.latitude);
       Session.set('plng', position.coords.longitude);

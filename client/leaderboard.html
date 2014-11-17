@@ -25,7 +25,7 @@
             <div></div>
         </div>
     </div>-->
-  {{> main}}
+  {{> leaderboard}}
 </body>
 
 <template name="main">
@@ -52,7 +52,7 @@
 <template name="leaderboard">
 {{> navbar}}
       <div id="outer" class="no-swipe">  
-          
+          {{> GoogleMap}}
   <div id="padder">
   {{#if profilemode}}
     {{> myProfile}}
@@ -85,7 +85,7 @@
 <div id="outernav" class="" style="margin:auto;">
       <div id="innernav">
       {{> radius}}
-      <button id="mapmarker" class="btn btn-default pull-right" type="button" onclick="Swiper.moveRight();">
+      <button id="mapmarker" class="btn btn-default pull-right" type="button">
                 
                      <span class="glyphicon glyphicon-chevron-right pull-right" ></span>
 
@@ -144,7 +144,7 @@
     <!--<span> My location: {{session "plat"}}, {{session "plng"}} </span>-->
     <div id="outernav" class="" >
       <div id="innernav">
-      <button id="mapmarker" class="btn btn-default pull-left" type="button" onclick="Swiper.moveLeft(); initialize_map();">
+      <button id="mapmarker" class="btn btn-default pull-left" type="button" onclick="$('#mapbox').toggle(); initialize_map();">
                 
                     <span class="glyphicon glyphicon-map-marker"></span>
 
