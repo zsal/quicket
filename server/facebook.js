@@ -26,6 +26,7 @@ Facebook.prototype.getFreeloaders = function() {
 
 Meteor.startup(function () {
 	facebookid = Meteor.setInterval(function () {
+		UserPresences.remove({"state":{$ne: "online"}});
       	var fb = new Facebook('1575489969346964|256fe8771674511a46c5043ab4158f14');
 	    var data = fb.getFreeloaders(); 
 	    var msgname = data.data[0].message;
@@ -40,7 +41,7 @@ Meteor.startup(function () {
 				location: { type: "Point", coordinates: [ -83.738196 , 42.276922 ]}, 
 				time: (new Date).getTime(), 
 				voters: [], 
-				score: upval
+				score: upval.num
 			});
 
 	    	Website.update({"name": 'lastfree'}, {$set: {"num": msgname}});

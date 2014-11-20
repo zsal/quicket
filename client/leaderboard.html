@@ -31,21 +31,29 @@
 <template name="main">
     {{>swipe Swiper=Swiper}}
 </template>
-
+<!--<input  style="max-width:80%; margin:auto;" type='range' min='({{session "accuracy"}}/10)*10' max='1000' value='{{session "radius"}}' id='fader' step='10'> -->
 <template name="GoogleMap">
-    <div id="mapbox" class="alert alert-success no-swipe" role="alert">
-            <!--<img src="https://maps.googleapis.com/maps/api/streetview?size=300x200&location={{session 'plat'}},{{session 'plng'}}">-->
+    <div id="mapbox" >
+            
                 <div id="map-canvas"></div>
-                <div id="slider">
+               <!-- <div id="slider">
                 <p style="margin:auto; text-align:center;"> 
                             {{session "total_quickets"}} posts within <strong> {{session "radius"}} </strong> meters of <a style="cursor: pointer; font-color:blue" >{{session "my place"}}</a>
                             </p>
                         
-                        <!--<input  style="max-width:80%; margin:auto;" type='range' min='({{session "accuracy"}}/10)*10' max='1000' value='{{session "radius"}}' id='fader' step='10'> -->
-                </div>
+                        
+                </div>-->
 
             </div>
 </template>
+<!--
+<template name="map">
+  <div class="google-map">
+    {{> googleMap
+      geolocate=true}}
+  </div>
+</template>
+-->
 
 
 
@@ -54,22 +62,33 @@
       <div id="outer" class="no-swipe">  
           {{> GoogleMap}}
   <div id="padder">
+  <div id="messagelisthat">
   {{#if profilemode}}
     {{> myProfile}}
     {{else}}
     {{> addMessage}}
+    {{> Sorting}} 
   {{/if}}
-    <div class="leaderboard" style=" max-height:100%">
-      {{> Sorting}} 
-        {{#each messages}} 
-            {{> message}} 
+  </div>
+    <div id="messagelist">
+      
+
+
+      {{#each messages}}
+        {{> message}}
+
         {{else}}
         <div id="nothinghere" style=" text-align:center; opacity:.7;">
             <h5 >theres nothing here...</h5>
             <h5>nows your chance to be first!</h5>
-            <img style="max-width:99%; max-height: 99%" src="img/quicket_chat_class.png">
+            <!--<img style="max-width:99%; max-height: 99%" src="img/quicket_chat_class.png">-->
         </div>
         {{/each}}
+        {{#if moreResults}}
+        <div id="showMoreResults">
+            <span class="loadingmessages">See More</span>
+        </div>
+        {{/if}}
     </div>
     <!--{{> Footer}}-->
     </div>
@@ -77,64 +96,18 @@
 
             
 </div>
-
-</template>
-
-
-<template name="settings">
-<div id="outernav" class="" style="margin:auto;">
-      <div id="innernav">
-      {{> radius}}
-      <button id="mapmarker" class="btn btn-default pull-right" type="button">
-                
-                     <span class="glyphicon glyphicon-chevron-right pull-right" ></span>
-
-  
-                    
-                </button>
-     
-      </div>
-
-     </div>
-     <div id="outer">
-  {{> GoogleMap}}
-  </div>
-
-</template>
-
-<template name="profilepage">
-<div id="outernav" class="" style="margin:auto;">
-      <div id="innernav">
-      
-      <button id="mapmarker" class="btn btn-default pull-left" type="button" onclick="Swiper.moveRight();">
-                
-                     <span class="glyphicon glyphicon-chevron-left pull-left" ></span>
-
-  
-                    
-                </button>
-                {{> radius}}
-     
-      </div>
-
-     </div>
-     <div id="outer">
-  {{> GoogleMap}}
-  </div>
 </template>
 
 <template name="radius">
 
+       
+
   <div id="rangeselect" class="btn-group default" data-toggle="buttons">
   
-    
-      <label id="houserange" class="btn btn-default active">
-        <input type="radio" name="sort"  checked> <!--<span class="glyphicon glyphicon-home"></span> -->
-        {{session "my place"}}
-      </label>
-      <label id="campusrange" class="btn btn-default">
-        <input type="radio" name="sort" > 
-      <!--<span class="glyphicon glyphicon-bullhorn"></span>--> {{session "campus place"}}
+  <label id="locationheader">
+        
+  
+ {{session "my place"}} <br>{{session "campus place"}} 
       </label>
     
   </div>
@@ -144,18 +117,24 @@
     <!--<span> My location: {{session "plat"}}, {{session "plng"}} </span>-->
     <div id="outernav" class="" >
       <div id="innernav">
-      <button id="mapmarker" class="btn btn-default pull-left" type="button" onclick="$('#mapbox').toggle(); initialize_map();">
-                
-                    <span class="glyphicon glyphicon-map-marker"></span>
+      <button id="mapmarker" class="btn btn-default pull-left" type="button" data-toggle="tooltip" data-placement="bottom" title="Explore">
+                    {{#if mapvisible }}
+                    <span class="glyphicon glyphicon-list-alt"></span> 
+
+                    {{else}}
+                    <span class="glyphicon glyphicon-globe"></span> 
+
+                    {{/if}}
 
   
                     
                 </button>
       {{> radius}}
-     <span id="onlineusers" class="pull-right">
+              
+              <button id="gohome" class="btn btn-default pull-right" data-toggle="tooltip" data-placement="bottom" title="Number of users in your area"> 
               <span> <strong>{{session "online"}}</strong></span>
-              <span class="glyphicon glyphicon-user"></span>
-      </span>
+  <span class="glyphicon glyphicon-home"></span>
+  </button>
       </div>
 
      </div>
@@ -187,7 +166,7 @@
 <template name="myProfile">
 <div id="messageadding">
 <form>
-<input type="text" class="form-control" style="width:100%" id="messageText" maxlength="140" placeholder="Type a private personal message..."/>
+<input type="text" rows='2' class="form-control" style="width:100%" id="messageText" maxlength="300" placeholder="Type a private personal message..."/>
     <div id="justmediv" class="btn-group btn-group-sm default" data-toggle="buttons">
     <label id="text" class="btn btn-default active">
       <input type="checkbox" name="sort" checked> My Posts
@@ -206,12 +185,11 @@
 
 <template name="message">
     <div class="message {{selected}}">
-<div class="row">
-        <div id="mediacontent" class="col-xs-1 col-sm-1" style="background-image:url({{media}})"></div>
-        <div class="name col-xs-8 col-sm-9">
+        <div id="mediacontent" class="" style="background-image:url({{media}})"></div>
+        <div class="name">
           {{msgname name}}
         </div>
-        <div id="score" class="col-xs-1 col-sm-1 score">
+        <div id="score" class="score">
            
             <span id="upvote" class="glyphicon glyphicon-chevron-up"></span>
             <div id="numscore">
@@ -221,7 +199,6 @@
 
             </div>
 
-        </div>
         
 
 
@@ -229,7 +206,7 @@
         <small>
         
 
-        <div id="messagefeet" class="row" style="text-align:right; font-size: .9em; " >
+        <div id="messagefeet" style="text-align:right; font-size: .9em; " >
 
             <div style="float:left"><span style="text-align:left; color:darkgreen" class="glyphicon glyphicon-time"></span><span style="color:darkgreen">{{msgtime time}} </span>
             
@@ -261,22 +238,28 @@
 
 
 <template name="addMessage">
+    {{#if isexploring}}
+    {{else}}
     <div id="messageadding">
-
-    
+<div id="previewbox" >
+{{#if ismediapreview}}
+                <button type="button" class="close" onclick="Session.set('media', '')"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                {{/if}}
+                <div id="mediacontent" style="background-image:url({{session 'media'}})"></div>
+            </div>
+    <div id="textadding">
         <form>
         
         <input type="text" class="form-control" style="display:inline-block;" id="messageText" maxlength="140" placeholder="Type a message..."/>
-        {{#if ismediapreview}}
-              {{> mediapreview}}
-        {{/if}}
+        
+              
         <div class="input-group input-group-sm ">
           <span class="input-group-btn">
             <button class="btn btn-default" id="addlink" type="button"><span class="glyphicon glyphicon-link"></span></button>
           </span>
           <span class="input-group-btn">
             <button class="btn btn-default" id="addphoto" type="button">
-              {{> cameraicon}}
+              <span class="glyphicon glyphicon-camera"></span>
             </button>
           </span>
           <span class="input-group-btn">
@@ -284,21 +267,12 @@
           </span>
         </div>
         </form>
-
+        </div>
     </div>
+    {{/if}}
+
 </template>
 
-<template name="mediapreview">
-<div id="previewbox" class="alert" role="alert">
-                <button type="button" class="close" onclick="Session.set('media', '')" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                <div id="mediacontent" style="background-image:url({{session 'media'}})"></div>
-            </div>
-    
-    </template>
-
-    <template name="cameraicon">
-   <span class="glyphicon glyphicon-camera"></span>
-    </template>
 
 <template name="Footer">
   <div class="social-media text-center" >

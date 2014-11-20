@@ -2,9 +2,10 @@
 var upval_inc = .1;
 var newstuffscore = 1;
 var start = true;
-var start2 = 3;
+var start2 = 2;
 var newuser = false;
-var ITEMS_INCREMENT = 20;
+var ITEMS_INCREMENT = 10;
+
 
 
 var sort = {
@@ -16,41 +17,70 @@ var map;
 var infowindow;
 
 Session.setDefault('itemsLimit', ITEMS_INCREMENT);
-Session.setDefault('online', -1);
+Session.setDefault('online', 1);
 Session.setDefault('plat', -1);
 Session.setDefault('plng', -1);
-Session.setDefault('my place', "100 meters");
-Session.setDefault('campus place', "1000 meters");
+Session.setDefault('my place', "Welcome to Quicket!");
+Session.setDefault('campus place', "Getting Location...");
+Session.set('mapvis', false);
+Session.set('explore', false);
+Session.set('homelat', undefined);
+Session.set('homelng', undefined);
 
 
 // in meters
 Session.setDefault('accuracy', 30);
-Session.setDefault('radius', 100);
-
-
+Session.setDefault('radius', 1357.9953559153475);
 
 Session.setDefault('total_quickets', 0);
 Session.setDefault("sort", sort['new']);
 // get user location
 Meteor.startup(function () {
-  $('#mapbox').hide();
+
+  $(document).ready(function() {
+    $.getJSON("http://www.telize.com/geoip?callback=?",
+      function(json) {
+        if(start2 == 2) {
+          Session.set('plat', json.latitude);
+          Session.set('plng', json.longitude);
+          initialize_map();
+        }
+      }
+    );
+  });
 
   var watchID = navigator.geolocation.watchPosition(function(position) {
+    if(start2){
+      start2 = 1;
+    }
+    Session.set('homelat', position.coords.latitude);
+    Session.set('homelng', position.coords.longitude);
+    Meteor.subscribe("housemessages", [Session.get('plng'), Session.get('plat'), Session.get('radius'), Session.get('itemsLimit')]);
+
+    if(!Session.get('explore')) {
       Session.set('plat', position.coords.latitude);
       Session.set('plng', position.coords.longitude);
-      Session.set('accuracy', Math.min(Math.round(position.coords.accuracy), 500));
-
-      Session.set('radius', Math.max(Session.get('accuracy'), Session.get('radius') ));
-      $("#overlay").delay(1000).fadeOut();
-      $("#outer").delay(2000).css('opacity', '1');
+      if(!Session.get("media")){
+        Session.set("media", 
+        "https://maps.googleapis.com/maps/api/streetview?size=300x240&location="+Session.get("homelat")+","+Session.get("homelng"));
+      }
+      
+      //Session.set('accuracy', Math.min(Math.round(position.coords.accuracy), 200));
+      //Session.set('radius', Math.max(Session.get('accuracy'), Session.get('radius') ));
+      //$("#overlay").delay(1000).fadeOut();
+      //$("#outer").delay(2000).css('opacity', '1');
       if(start2){
+        start2=0;
+        Meteor.call("getyybatch", Session.get("plng") , Session.get("plat"));
+        console.log("batch: ", Session.get("plng") , Session.get("plat"));
         initialize_map();
         //var x = document.getElementById("errorhandle");
         //x.innerHTML = "Found Location!"
-        start2--;
       }
-      map.setCenter(new google.maps.LatLng(Session.get("plat"), Session.get("plng")));
-      circle.setCenter(new google.maps.LatLng(Session.get("plat"), Session.get("plng")));
+      var newcenter = new google.maps.LatLng(Session.get("plat"), Session.get("plng"));
+      circle.setCenter(newcenter);
+      map.setCenter(newcenter);
+    }
   }, function(error) {
     var x = document.getElementById("errorhandle");
     switch(error.code) {
@@ -71,7 +101,7 @@ Meteor.startup(function () {
   },
   {
     enableHighAccuracy: true,
-    maximumAge: 0
+    maximumAge: 15000
   });
 });
 
@@ -91,26 +121,53 @@ Meteor.startup(function () {
 ga('create', 'UA-54737425-1', 'auto');
 ga('send', 'pageview');
 
-function upRadius(val) {
-    var rad = Math.max(Math.round(Session.get("accuracy")),+val)
-    Session.set("radius", rad);
-    circle.setRadius(rad);
-    map.fitBounds(circle.getBounds());
+getLocationInfo = function(mylat, myloc) {
+  var url = "http://geocoder.ca/?latt="+ Session.get('plat') +"&longt="+ Session.get('plng') +"&reverse=1&allna=1&geoit=xml&corner=1&json=1&callback=yo"
+  Meteor.http.call("GET",url,function(error,result){
+    if(mylat == Session.get("plat") && myloc == Session.get("plng")) {
+      var city = result.data.city + ", " + result.data.prov;
+    var street = result.data.staddress;
+    if(!street) {
+      street = '';
+    }
+       Session.set("my place", street);
+    if(city == 'undefined, undefined') {
+      city = '';
+    } 
+       Session.set("campus place", city);
+    }
+    
+  });
 }
+
+
+
+Template.navbar.helpers({
+  'mapvisible':function(){
+    return Session.get('mapvis');
+  }
+})
+
+
+
 
 Template.radius.events({
   'click #houserange' : function() {
       var rad = Math.max(Math.round(Session.get("accuracy")),100)
       Session.set("radius", rad);
+      map.setCenter(new google.maps.LatLng(Session.get("plat"), Session.get("plng")));
       circle.setRadius(rad);
-      map.fitBounds(circle.getBounds());
   }, 
+
+  'dblclick #houserange, dblclick #campusrange' : function() {
+      map.fitBounds(circle.getBounds());
+  },
 
   'click #campusrange' : function() {
       var rad = Math.max(Math.round(Session.get("accuracy")),1000)
       Session.set("radius", rad);
+      map.setCenter(new google.maps.LatLng(Session.get("plat"), Session.get("plng")));
       circle.setRadius(rad);
-      map.fitBounds(circle.getBounds());
   }
 });
 
@@ -153,14 +210,49 @@ initialize_map = function() {
     infowindow = new google.maps.InfoWindow();
     var service = new google.maps.places.PlacesService(map);
     service.nearbySearch(request, callback);
+
+    google.maps.event.addListener(map, 'dragend', function() {
+        Session.set('explore', true);
+        var loc = map.getCenter();
+        if((Math.abs(loc.lat() - Session.get('plat'))) + (Math.abs(loc.lng() - Session.get('plng'))) > .2) {
+          Meteor.call("getyybatch", loc.lng() , loc.lat());
+          console.log("batch: ", Session.get("plng") , Session.get("plat"));
+        }
+        Session.set('plat', loc.lat()); 
+        Session.set('plng',loc.lng());
+        circle.setCenter(new google.maps.LatLng(Session.get("plat"), Session.get("plng")));
+        getLocationInfo(loc.lat(), loc.lng());
+
+    });
+
+    google.maps.event.addListener(map, 'zoom_changed', function() {
+
+      var zoomLevel = map.getZoom();
+      //zoomLevel = Math.max(1, zoomLevel - 9);
+      var newradius = 2000000*Math.pow(Math.E,-0.562*zoomLevel)+15;
+      console.log(zoomLevel, newradius);
+      Session.set("radius", newradius);
+      circle.setRadius(newradius);
+
+    });
   }
+
+
+
+  
 
   function callback(results, status) {
       console.log(results)
     if (status == google.maps.places.PlacesServiceStatus.OK) {
           //console.log(results[i]);
           Session.set("my place", results[0].name);
-          Session.set("campus place", results[0].vicinity);
+          if(results[0].vicinity) {
+            Session.set("campus place", results[0].vicinity);
+          }
+          else{
+            Session.set("campus place", "1000 meters");
+          }
+
           //createMarker(results[0]);
     }
   }
@@ -222,10 +314,7 @@ Tracker.autorun(function () {
   Meteor.subscribe("messages", 
     [Session.get('plng'), Session.get('plat'), Session.get('radius'), Session.get('itemsLimit')]);
   //console.log(Session.get('radius'));
-  Meteor.subscribe("housemessages", 
-    [Session.get('plng'), Session.get('plat'), Session.get('radius'), Session.get('itemsLimit')]);
-  
-  Meteor.subscribe("me", cookie);
+  //Meteor.subscribe("me", cookie);
   Meteor.subscribe("yaks",
      [Session.get('plng'), Session.get('plat'), Session.get('radius'), Session.get('itemsLimit')]);
   Meteor.subscribe('userPresence');
@@ -244,17 +333,14 @@ Tracker.autorun(function() {
         $maxDistance: Session.get("radius") / 6371
       }
     });
-    Session.set("online", v.count());
-    //console.log(UserPresences.find().count(), Session.get("online"));
-});
 
-Tracker.autorun(function() {
-  if(map && Session.get('plat') !=-1) {
-    initialize_map();
-    var loc = new google.maps.LatLng(Session.get('plat'), Session.get('plng'))
-    map.panTo(loc);
-    circle.setCenter(loc);
-  }
+    var numonline = v.count();
+    if(numonline < 1) {
+      numonline = 1;
+    }
+
+    Session.set("online", numonline);
+    //console.log(UserPresences.find().count(), Session.get("online"));
 });
 
 Meteor.subscribe("website");
@@ -271,8 +357,6 @@ Handlebars.registerHelper('session',function(input){
   return Session.get(input);
 });
 
-
-
 // populate feed
 Template.leaderboard.helpers({
 
@@ -288,10 +372,10 @@ Template.leaderboard.helpers({
       msglist = MessageDb.find({ $or: [ { author: cookie }, { voters: {$in: [cookie]} } ] }, {sort:{time:-1}});
     } else {
       var mindist = 0;
-      if(Session.get('radius') > 100) {
+      /*if(Session.get('radius') > 100) {
         mindist = 100;
         query.house = {$gt: 100};
-      }
+      }*/
       query = { 
         location:
          { $near :
@@ -328,6 +412,11 @@ Template.leaderboard.helpers({
 
   'profilemode' : function () {
     return Session.get("sort") == "me";
+  },
+
+  'moreResults' : function () {
+    Session.set("itemsLimit", Session.get("itemsLimit") + ITEMS_INCREMENT);
+    return true;
   }
 
 });
@@ -397,6 +486,40 @@ Template.Sorting.events({
   }
 });
 
+Template.navbar.events({
+  'click #gohome' :function() {
+    Session.set("plat", Session.get("homelat"));
+    Session.set("plng", Session.get("homelng"));
+    Session.set("explore", false);
+    var newcenter = new google.maps.LatLng(Session.get("plat"), Session.get("plng"));
+    map.setCenter(newcenter);
+    circle.setCenter(newcenter);
+    getLocationInfo(Session.get("homelat"), Session.get("homelng"));
+
+  },
+
+  'click #mapmarker': function() {
+    if(Session.get('mapvis')){
+      //$('#messageadding').show(); 
+      $('#mapbox').css('visibility', 'hidden'); 
+      Session.set('mapvis', false);
+
+    }
+    else{
+      //$('#messageadding').hide(); 
+
+      $('#mapbox').css({
+             'visibility': 'visible',
+              width: $(window).width(),
+              height: $(window).height(), 
+              'z-index': 8
+          });
+      Session.set('mapvis', true);
+    }
+  }
+
+})
+
 
 // hop (upvote)
 Template.message.events({
@@ -425,6 +548,22 @@ Template.message.events({
             'background-size': 'contain',
             'z-index': 10000
         });
+      $(e.currentTarget.parentNode.children[2]).css({
+        display:'none'
+      });
+      $(e.currentTarget.parentNode.children[1]).css({
+          position: 'fixed',
+          color: 'white',
+          
+            bottom: 0,
+            'padding-left': '0em',
+            width: '100%',
+            opacity: .7,
+            'font-size': '1.5em',
+            'text-align': 'center',
+            'background-color': 'black',
+            'z-index': 10001
+      });
     }
   },
 
@@ -435,13 +574,29 @@ Template.message.events({
             'width': '3.6em',
             'height': '3.8em',
             border:'.1em solid #d1d1d1',
-            'margin-bottom': '1em',
             'margin-top': '1em',
+            'margin-left': '.3em',
             'border-radius': '3em',
             'background-color': 'white',
             'background-size': 'cover',
             'z-index': 1
         });
+
+      $(e.currentTarget.parentNode.children[1]).css({
+          position: 'initial',
+          color: 'black',
+          'text-align': 'initial',
+            bottom: '10%',
+            width: '70%',
+            'padding-left': '1em',
+            opacity: 1,
+            'font-size': '.94em',
+            'background-color': 'initial',
+            'z-index': 1
+      });
+      $(e.currentTarget.parentNode.children[2]).css({
+        display:'block'
+      });
     }
   }
 
@@ -452,6 +607,9 @@ Template.addMessage.helpers({
 
   'ismediapreview' : function() {
     return Session.get("media");
+  },
+  'isexploring' : function() {
+    return Session.get("explore");
   }
 });
 
@@ -461,15 +619,11 @@ Template.addMessage.events = {
     var msg = messageText.value;
     var privacy = false;
 
-    if(Session.get("sort") == 'me') {
-      privacy = true;
-    }
-
     Meteor.call("post",
       cookie, msg, Session.get("media"), Session.get("plng") , Session.get("plat"), Session.get("radius"), privacy,
       function() {
         messageText.value = "";
-        Session.set("media", "");
+        //Session.set("media", "https://maps.googleapis.com/maps/api/streetview?size=300x240&location="+Session.get("homelat")+","+Session.get("homelng"));
       }
     );
     event.preventDefault();
