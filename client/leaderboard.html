@@ -1,3 +1,4 @@
+
 <head>
     <title>Quicket</title>
     <meta name="description" content="A simple location-based chatroom. Share or discover messages, links, and photos to anyone up to 1000 meters away!">
@@ -8,7 +9,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <link rel="icon" type="image/png" href="http://s3.postimg.org/qen3mdtpb/cricketfill.png">
     <link rel="apple-touch-icon" href="/resources/icons/icon-60x60.png">
-    <link rel="apple-touch-startup-image" href="/resources/splash/splash-320x480.png">
+    <link rel="apple-touch-startup-image" href="/resources/splash/splash-640x1096.png">
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
@@ -25,12 +26,10 @@
             <div></div>
         </div>
     </div>-->
-  {{> leaderboard}}
+    {{> deviceRender 'leaderboard'}}
 </body>
 
-<template name="main">
-    {{>swipe Swiper=Swiper}}
-</template>
+
 <!--<input  style="max-width:80%; margin:auto;" type='range' min='({{session "accuracy"}}/10)*10' max='1000' value='{{session "radius"}}' id='fader' step='10'> -->
 <template name="GoogleMap">
     <div id="mapbox" >
@@ -59,7 +58,7 @@
 
 <template name="leaderboard">
 {{> navbar}}
-      <div id="outer" class="no-swipe">  
+      <div id="outer">  
           {{> GoogleMap}}
   <div id="padder">
   <div id="messagelisthat">
@@ -80,15 +79,15 @@
         {{else}}
         <div id="nothinghere" style=" text-align:center; opacity:.7;">
             <h5 >theres nothing here...</h5>
-            <h5>nows your chance to be first!</h5>
-            <!--<img style="max-width:99%; max-height: 99%" src="img/quicket_chat_class.png">-->
+            <!--<h5>nows your chance to be first!</h5>
+            <img style="max-width:99%; max-height: 99%" src="img/quicket_chat_class.png">-->
         </div>
         {{/each}}
-        {{#if moreResults}}
+
         <div id="showMoreResults">
-            <span class="loadingmessages">See More</span>
+            <button class="btn btn-default" id="seemore">See More...</button>
         </div>
-        {{/if}}
+        
     </div>
     <!--{{> Footer}}-->
     </div>
@@ -102,12 +101,12 @@
 
        
 
-  <div id="rangeselect" class="btn-group default" data-toggle="buttons">
+  <div id="rangeselect" class="btn-group default">
   
   <label id="locationheader">
         
   
- {{session "my place"}} <br>{{session "campus place"}} 
+ within {{session "radius"}} meters of  <br>{{session "my place"}} {{session "campus place"}} 
       </label>
     
   </div>
@@ -115,7 +114,7 @@
 
 <template name="navbar">
     <!--<span> My location: {{session "plat"}}, {{session "plng"}} </span>-->
-    <div id="outernav" class="" >
+    <div id="outernav" class="no-swipe" >
       <div id="innernav">
       <button id="mapmarker" class="btn btn-default pull-left" type="button" data-toggle="tooltip" data-placement="bottom" title="Explore">
                     {{#if mapvisible }}
@@ -161,25 +160,6 @@
              
 
     
-</template>
-
-<template name="myProfile">
-<div id="messageadding">
-<form>
-<input type="text" rows='2' class="form-control" style="width:100%" id="messageText" maxlength="300" placeholder="Type a private personal message..."/>
-    <div id="justmediv" class="btn-group btn-group-sm default" data-toggle="buttons">
-    <label id="text" class="btn btn-default active">
-      <input type="checkbox" name="sort" checked> My Posts
-    </label>
-    <label id="photo" class="btn btn-default">
-      <input type="checkbox" name="sort" checked> My Hops
-    </label>
-    <label id="send" class="btn btn-default">
-      <input type="checkbox" name="sort" > Here
-    </label>
-  </div>
-  </form>
-  </div>
 </template>
 
 
@@ -243,24 +223,38 @@
     <div id="messageadding">
 <div id="previewbox" >
 {{#if ismediapreview}}
-                <button type="button" class="close" onclick="Session.set('media', '')"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <button type="button" class="close" onclick="Session.set('media', '/resources/splash/splash-thin.png')"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
                 {{/if}}
                 <div id="mediacontent" style="background-image:url({{session 'media'}})"></div>
             </div>
     <div id="textadding">
         <form>
-        
-        <input type="text" class="form-control" style="display:inline-block;" id="messageText" maxlength="140" placeholder="Type a message..."/>
-        
+        <div id="thetextbox">
+        <input type="text" class="form-control" style="display:inline-block;" id="messageText" maxlength="160" placeholder="Type a message..."/>
+        </div>
               
-        <div class="input-group input-group-sm ">
-          <span class="input-group-btn">
-            <button class="btn btn-default" id="addlink" type="button"><span class="glyphicon glyphicon-link"></span></button>
-          </span>
+        <div class="input-group ">
           <span class="input-group-btn">
             <button class="btn btn-default" id="addphoto" type="button">
               <span class="glyphicon glyphicon-camera"></span>
             </button>
+          </span>
+          <span class="input-group-btn">
+
+          <div class="fileUpload">
+          <button class="btn btn-default" id="addphotoupload" type="button">
+          <span class="glyphicon glyphicon-upload"></span>
+            <input type="file" accept="image/*" capture="camera" id="uploadimg">
+
+          </button>
+          
+          </div>
+          </span>
+          <span class="input-group-btn">
+            <button class="btn btn-default" id="addstreetview" type="button"><span class="glyphicon glyphicon-map-marker"></span></button>
+          </span>
+          <span class="input-group-btn">
+            <button class="btn btn-default" id="addlink" type="button"><span class="glyphicon glyphicon-link"></span></button>
           </span>
           <span class="input-group-btn">
             <button class="btn btn-default" id="send" type="submit">Send</button>

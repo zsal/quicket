@@ -4,7 +4,7 @@ App.info({
   author: 'Zigo Studio',
   email: 'teamquicket@umich.edu',
   website: 'http://qckt.me',
-  version: '0.0.2'
+  version: '0.0.3'
 
 });
 /*
