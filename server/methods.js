@@ -77,22 +77,6 @@ Meteor.methods({
 
               var choice = Math.floor(Math.random()*5);
               var _media = mediachoices[choice];
-              // var latLng = new google.maps.LatLng(_batch[b]['latitude'], _batch[b]['longitude']);
-              // streetViewService.getPanoramaByLocation(latLng, STREETVIEW_MAX_DISTANCE, function (streetViewPanoramaData, status) {
-              //     if (status === google.maps.StreetViewStatus.OK) {
-              //         _media = mediachoices[2];
-              //         _media += _batch[b]['latitude'] +"," + _batch[b]['longitude'];
-              //         choice = 2;
-              //     } 
-              //     else {
-              //       choice = Math.random();
-              //       if(choice > .8) {
-              //         _media = mediachoices[1];
-              //       } else{
-              //         _media = mediachoices[0];
-              //       }
-              //     }
-              // });
 
               MessageDb.insert({
                 name: _batch[b]['message'],
@@ -127,7 +111,7 @@ Meteor.methods({
   getyybatch: function(lng, lat) {
     console.log(lat, lng);
 
-    if(((new Date).getTime() - recent) < 1000 && Math.abs(recentlat - lat) + Math.abs(recentlng - lng) < .2) {
+    if(((new Date).getTime() - recent) < 400 && Math.abs(recentlat - lat) + Math.abs(recentlng - lng) < .1) {
       console.log("repeat batch, no can do!");
       return;
     }
@@ -138,11 +122,11 @@ Meteor.methods({
                 location: { 
                   $geoWithin :
                       {
-                       $centerSphere : [ [ lng, lat ] , 5000/6378100 ] 
+                       $centerSphere : [ [ lng, lat ] , 1000/6378100 ] 
                      }
                 },
                 author: "yy",
-                insertedat: {$gte: recent - 450000}
+                insertedat: {$gte: recent - 45000}
                });
 
       if(!v ) {
@@ -159,8 +143,7 @@ Meteor.methods({
       if (canvote === -1 && Math.abs(posneg) == 1){
         //var upval = Website.find({name: {$in:['upval']}}).fetch()[0];
 
-        MessageDb.update(msgid, {$inc: {score: posneg, clicks: posneg*1}});
-
+        MessageDb.update(msgid, {$inc: {score: posneg, clicks: posneg}});
         MessageDb.update(msgid, {$push: {voters: cookie}});
 
         //Website.update(upval._id, {$inc: {num: 1}});

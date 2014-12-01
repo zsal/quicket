@@ -3,7 +3,7 @@ App.info({
   description: 'Everyone nearby in one chat room!',
   author: 'Zigo Studio',
   email: 'teamquicket@umich.edu',
-  website: 'http://qckt.me',
+  website: 'http://www.qckt.me',
   version: '0.0.3'
 
 });

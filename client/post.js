@@ -1,3 +1,4 @@
+var rate = 0;
 
 Session.set("media", "/resources/splash/splash-thin.png");
 
@@ -27,18 +28,33 @@ $("#uploadimg").on("change",gotPic);
 });
 // post
 Template.addMessage.events = {
+  'change #messageText' : function() {
+    console.log(messageText.value);
+    var msg = messageText.value;
+    var linkprev = msg.imageify();
+    if(linkprev) {
+      Session.set('media', linkprev);
+    }
+  },
+
   'submit form': function (event, template) {
     var msg = messageText.value;
     var privacy = false;
-
-    Meteor.call("post",
-      cookie, msg, Session.get("media"), Session.get("plng") , Session.get("plat"), Session.get("radius"), privacy,
-      function(err, data) {
-        if(err)
-        console.log(err);
-          
-        }
-    );
+    if(rate < 4) {
+      rate++;
+      console.log(rate);
+      Meteor.call("post", cookie, msg, Session.get("media"), Session.get("plng") , Session.get("plat"), Session.get("radius"), privacy,
+        function(err, data) {
+          if(err){
+            console.log(err);
+          }
+          setTimeout(function() { rate--;}, 3000);
+        });
+    }
+    else{
+      alert("You're posting too fast, you are temporarily banned from posting on our service.");
+      rate+= 2;
+    }
 
     messageText.value = "";
     Session.set("media", "/resources/splash/splash-thin.png");
@@ -55,7 +71,7 @@ Template.addMessage.events = {
     }
   },
 'click #addstreetview' : function () {
-      Session.set("media", "https://maps.googleapis.com/maps/api/streetview?size=300x240&location="+Session.get("homelat")+","+Session.get("homelng"));
+      Session.set("media", "https://maps.googleapis.com/maps/api/streetview?size=600x480&location="+Session.get("homelat")+","+Session.get("homelng"));
       
   },
   'click #addphoto' : function () {

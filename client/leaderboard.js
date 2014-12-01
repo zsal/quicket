@@ -11,9 +11,12 @@ Session.setDefault('total_quickets', 0);
 
 Tracker.autorun(function () {
   //Meteor.subscribe("localmessages",[Session.get('plng'), Session.get('plat'), Session.get('radius'), Session.get('locallimit')]);
-  Meteor.subscribe("newmessages",[Session.get('plng'), Session.get('plat'), Session.get('radius'), Session.get('newlimit')]);
-  Meteor.subscribe("hotmessages",[Session.get('plng'), Session.get('plat'), Session.get('radius'), Session.get('hotlimit')]);
-  Meteor.subscribe('userPresence');
+  if(Session.get('plat') && Session.get('plng')){
+    Meteor.subscribe("newmessages",[Session.get('plng'), Session.get('plat'), Session.get('radius'), Session.get('newlimit')]);
+    Meteor.subscribe("hotmessages",[Session.get('plng'), Session.get('plat'), Session.get('radius'), Session.get('hotlimit')]);
+    Meteor.subscribe('userPresence');
+  }
+  
   //console.log(Session.get('radius'));
   //Meteor.subscribe("me", cookie);
   //Meteor.subscribe("yaks",[Session.get('plng'), Session.get('plat'), Session.get('radius'), Session.get('itemsLimit')]);

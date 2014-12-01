@@ -1,4 +1,4 @@
-Famous.main(function(require) {
+/*Famous.main(function(require) {
   var FamousEngine = require('famous/engine');
   var FamousSurface = require('famous/surface');
   var FT = require('famous/modifier');
@@ -104,4 +104,4 @@ Famous.main(function(require) {
   }
 
   attachTorqueSpring();
-});
+});*/

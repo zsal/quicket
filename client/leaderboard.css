@@ -32,7 +32,7 @@ body {
     border-radius: 3px !important;
     background-color: darkgreen !important;
     color: white !important;
-    outline: none;
+    outline: none !important;
 }
 
 #slider {
@@ -271,7 +271,7 @@ strong {
     color: darkgreen !important;
     border-width: 0px;
     font-weight: bolder;
-    font-size: 1em;
+    font-size: .95em;
 
     border-radius: 0px !important;
     box-shadow: inset 0 0px 0px rgba(0,0,0,.125) !important;
@@ -405,15 +405,21 @@ max-width:250px;
 }
 
 
-.message.selected#score#upvote{
-    background-color: lightgreen;
+.message.selected #score #upvote{
+    color: darkgreen;
+    opacity: 1;
+    
+}
+.message.selected #score #downvote{
+    color: black;
+    opacity: .8;
+
     
 }
 
-
 #score{
     float:right;
-    opacity: .5;
+    opacity: .8;
     position: relative;
     margin:auto;
   top: 50%;
@@ -430,16 +436,19 @@ max-width:250px;
 #numscore{
     color: darkgreen;
     margin:auto;
-    width: 1.6em;
+    width: 2.6em;
     position: relative;
-    left:-.49em;
+    left:-1.24em;
     text-align: center;
 
 }
 
 #upvote{
+    opacity: .4;
+
     position: relative;
-    left:.5em;
+    left:.25em;
+    font-weight: bolder;
 
 }
 #upvote:after{
@@ -457,8 +466,12 @@ max-width:250px;
     bottom:-10px;
 }
 #downvote{
+    opacity: .4;
+
+    font-weight: bolder;
+
     position: relative;
-    left:.4em;
+    left:.15em;
     top:-.3em;
 
 

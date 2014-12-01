@@ -4,6 +4,8 @@ marker = null;
 Session.set('mapvis', false);
 Session.set('explore', false);
 
+var zoomtoRad = [1, 1 ,1 ,1 , 200000, 120000, 70000, 40000, 22000, 12000, 7200, 4000, 2400, 1350, 800, 450, 260, 150, 100, 60, 40, 20];
+
 
 center_map = function() {
   var newcenter = new google.maps.LatLng(Session.get("plat"), Session.get("plng"));
@@ -87,8 +89,9 @@ initialize_map = function() {
       previoustotal = 0;
       var zoomLevel = map.getZoom();
       //zoomLevel = Math.max(1, zoomLevel - 9);
-      var newradius = 2000000*Math.pow(Math.E,-0.562*zoomLevel)+15;
-      //console.log(zoomLevel, newradius);
+      //var newradius = 2000000*Math.pow(Math.E,-0.562*zoomLevel)+15;
+      var newradius = zoomtoRad[zoomLevel];
+      console.log(zoomLevel, newradius);
       Session.set("radius", Math.round(newradius));
       circle.setRadius(newradius);
 
